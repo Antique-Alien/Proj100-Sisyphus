@@ -95,11 +95,11 @@ for (int i = 0; i < 20; i = i+1){
 }
 */
 buzzy.write(0.0f);
-//playRushE();
+playRushE();
 playFrog();
-//playRick();
-//playImperialMarch();
-//playMeglovania();
+playRick();
+playImperialMarch();
+playMeglovania();
 //coolBuzz("AA AA AA FL CAA FL CAAAA EE EE EE F CAA FL CAAAA");
 
 while(1){}
