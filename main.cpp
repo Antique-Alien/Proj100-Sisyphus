@@ -8,7 +8,7 @@
 #define TIME_PERIOD 10             //Constant compiler Values here 10 equates to 10ms or 100Hz base Frequency
 #define ENCODER_PIN_LEFT            D8
 #define ENCODER_PIN_RIGHT           D6 
-#define PULSES_PER_ROTATION         20
+#define PULSES_PER_ROTATION         60
 #define DEBOUNCE_US                 30000
 
 DigitalIn microswitch1(D4);         //Instance of the DigitalIn class called 'microswitch1'
