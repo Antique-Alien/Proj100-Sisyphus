@@ -10,6 +10,7 @@
 #define ENCODER_PIN_RIGHT           D6 
 #define PULSES_PER_ROTATION         60
 #define DEBOUNCE_US                 30000
+#define Circumference               209
 
 DigitalIn microswitch1(D4);         //Instance of the DigitalIn class called 'microswitch1'
 DigitalIn microswitch2(D3);         //Instance of the DigitalIn class called 'microswitch2'
@@ -61,17 +62,27 @@ int main ()
     while(true){
 
         // Write the parts of your code which should run in a loop between here..
-        {    
-        /* Wheel.Period_in_ms(2);//Set frequency of the PWMs 500Hz
-        Wheel.Speed(0.8,0.8);//Forward 80%
+        /*{    
+        Wheel.Period_in_ms(2);//Set frequency of the PWMs 500Hz
+        Wheel.Speed(0.8, 0.8);//Forward 80%
         wait_us(5000000);
         Wheel.Stop();
         wait_us(1000000);
-        Wheel.Speed(-0.8,-0.8);//Reverse 80%
-        wait_us(5000000);
+        Wheel.Speed(0.8, -0.8);// turn right?
+        wait_us(1000000);
         Wheel.Stop();
         wait_us(1000000);
-    */
+        Wheel.Speed(-0.8, 0.8);// turn left?
+        wait_us(1000000);
+        Wheel.Stop();
+        wait_us(1000000);
+        Wheel.Speed(-0.8, -0.8);//Reverse 80%
+        wait_us(5000000);
+        Wheel.Stop();
+        wait_us(1000000);*/
+        Wheel.Period_in_ms(2);//Set frequency of the PWMs 500Hz
+        Wheel.Speed(0.8, 0.8);//Forward 80%
+        while(left_encoder.pulseReceived() 
     }
 
 
