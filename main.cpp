@@ -47,6 +47,10 @@ int main ()
     printf("Press Blue Button To Begin\n\r");
     while (myButton == 0){greenLED = !greenLED; ThisThread::sleep_for(100ms);}
 
+    //Two Functions I wrote, to either play all the songs, or your of them
+    PlayAll();
+    PlaySong(1);
+
     // Start the encoders
     left_encoder.start();
     right_encoder.start();
@@ -82,12 +86,13 @@ int main ()
         wait_us(1000000);*/
         Wheel.Period_in_ms(2);//Set frequency of the PWMs 500Hz
         Wheel.Speed(0.8, 0.8);//Forward 80%
-        while(left_encoder.pulseReceived() 
+        while(left_encoder.pulseReceived()) {
+        }
     }
 
 
 
         // ..and here
 
-    };
+    
 }

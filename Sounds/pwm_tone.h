@@ -110,6 +110,11 @@
 void Tune(PwmOut name, int period, int beat);
 void Auto_tunes(PwmOut name, int period, int beat);
 void Stop_tunes(PwmOut name);
+void playMeglovania(PwmOut name);
+void playImperialMarch(PwmOut name);
+void playRick(PwmOut name);
+void playFrog(PwmOut name);
+void playRushE(PwmOut name);
         
 /* Private functions ---------------------------------------------------------*/
 

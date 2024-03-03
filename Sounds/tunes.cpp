@@ -79,3 +79,38 @@ void twinkle(int s){
     Tune(buzzer,1e6/C4,s*4);
     buzzer.period_ms(TIME_PERIOD);
   }
+
+void PlayAll(void){
+    playRushE(buzzer);
+    playMeglovania(buzzer);
+    playImperialMarch(buzzer);
+    playRick(buzzer);
+    playFrog(buzzer);
+}
+
+void PlaySong(int i){
+    switch (i){
+        case 0:
+        playRushE(buzzer);
+        break;
+
+        case 1:
+        playMeglovania(buzzer);
+        break;
+
+        case 2:
+        playImperialMarch(buzzer);
+        break;
+
+        case 3:
+        playRick(buzzer);
+        break;
+
+        case 4:
+        playFrog(buzzer);
+        break;
+
+        default:
+        break;
+    }
+}
