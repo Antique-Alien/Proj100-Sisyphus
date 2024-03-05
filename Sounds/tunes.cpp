@@ -81,8 +81,8 @@ void twinkle(int s){
   }
 
 void PlayAll(void){
-    playRushE(buzzer);
     playMeglovania(buzzer);
+    playRushE(buzzer);
     playImperialMarch(buzzer);
     playRick(buzzer);
     playFrog(buzzer);
