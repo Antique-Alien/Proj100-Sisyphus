@@ -72,21 +72,3 @@ int main ()
 
     };
 }
-
-
-void driveForward(float dist,float speed){
-    Wheel.Speed(speed, speed);
-    for(int i = 0; i<dist/circumfrence; i++){
-    }
-        /*
-    
-    for(int i = 0; i<dist/circumfrence; i++){
-        waitForPulse(However long we waint to wait before skipping)
-
-    }
-    motor stop
-    */
-
-
-
-}

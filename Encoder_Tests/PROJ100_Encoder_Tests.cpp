@@ -129,3 +129,50 @@ void speed_test(){
         ThisThread::sleep_for(std::chrono::milliseconds(loop_delay_ms));
     }
 }
+
+
+
+void driveForward(float dist, float tRPM, float circ){
+    //Get constants
+    int ppr = left_encoder.getPulsesPerRotation();
+    float rRPM;
+    float lRPM;
+    int rPulseCount;
+    int lPulseCount;
+    float numRotations = dist/circ;
+    int pulseTarget = floor(numRotations/ppr);
+    bool rolling = true;
+    int32_t lTime;
+    int32_t rTime;
+    float pwrIncrement = 0.0001;
+    while(rolling){
+        lTime = left_encoder.getLastPulseTimeUs();
+        rTime = right_encoder.getLastPulseTimeUs();
+        if(lTime>0){
+            lPulseCount++;
+        }
+        if(rTime>0){
+            rPulseCount++;
+        }
+        lRPM = (60000000.0f/(ppr*lTime));
+        rRPM = (60000000.0f/(ppr*rTime));
+        if(lRPM>tRPM){
+            Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()-pwrIncrement);
+        }
+        else if(lRPM<tRPM){
+            Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()+pwrIncrement);
+        }
+        if(rRPM>tRPM){
+            Wheel.Speed(Wheel.getSpeedRight()-pwrIncrement,Wheel.getSpeedLeft());
+        }
+        else if(lRPM<tRPM){
+            Wheel.Speed(Wheel.getSpeedRight()+pwrIncrement,Wheel.getSpeedLeft());
+        }
+        if(rPulseCount>=pulseTarget && lPulseCount>=pulseTarget){
+            Wheel.Speed(0,0);
+            rolling = false;
+        }
+    }
+
+
+}
