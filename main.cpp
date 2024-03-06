@@ -12,6 +12,7 @@
 #define ENCODER_PIN_RIGHT           D6 
 #define PULSES_PER_ROTATION         20
 #define DEBOUNCE_US                 30000
+#define circumfrence                209
 
 DigitalIn microswitch1(D4);         //Instance of the DigitalIn class called 'microswitch1'
 DigitalIn microswitch2(D3);         //Instance of the DigitalIn class called 'microswitch2'
@@ -73,8 +74,18 @@ int main ()
 }
 
 
-void driveForward(float dist){
+void driveForward(float dist,float speed){
+    Wheel.Speed(speed, speed);
+    for(int i = 0; i<dist/circumfrence; i++){
+    }
+        /*
     
+    for(int i = 0; i<dist/circumfrence; i++){
+        waitForPulse(However long we waint to wait before skipping)
+
+    }
+    motor stop
+    */
 
 
 
