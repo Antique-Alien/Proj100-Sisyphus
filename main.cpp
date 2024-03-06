@@ -59,8 +59,8 @@ int main ()
     /*************************************************/
 
     // simple_test();
-    speed_test();
-
+    //speed_test();
+    driveForward(400,10,circumfrence);
     while(true){
 
         // Write the parts of your code which should run in a loop between here..

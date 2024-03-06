@@ -135,27 +135,40 @@ void speed_test(){
 void driveForward(float dist, float tRPM, float circ){
     //Get constants
     int ppr = left_encoder.getPulsesPerRotation();
-    float rRPM;
-    float lRPM;
-    int rPulseCount;
-    int lPulseCount;
-    float numRotations = dist/circ;
-    int pulseTarget = floor(numRotations/ppr);
-    bool rolling = true;
+    float rRPM; //Right RPM
+    float lRPM; //Left RPM
+    int rPulseCount; // Number of pulses on the Right
+    int lPulseCount; // Number of pulses on the Left
+    float numRotations = dist/circ; // number of rotations needed
+    int pulseTarget = floor(numRotations/ppr); // Number of pulses needed to reach the target
+    bool rolling = true; // Is the cart supposed to be driving
     int32_t lTime;
     int32_t rTime;
-    float pwrIncrement = 0.0001;
+    float pwrIncrement = 0.0001; // Increment for changing power to the wheels
+    printf("Finished Setting up Variables\nInitalizing running loop\n");
+    printf("Target Number of Pulses: %d\n",pulseTarget);
+    
     while(rolling){
+
         lTime = left_encoder.getLastPulseTimeUs();
         rTime = right_encoder.getLastPulseTimeUs();
+        printf("Got last pulse time\n");
+        //Increment the pulse counts if the pulse reader gets a new pulse.
         if(lTime>0){
             lPulseCount++;
+            printf("Incremented left Pulse: %d\n",lPulseCount);
         }
         if(rTime>0){
+        
             rPulseCount++;
+            printf("Increment Right Pulse: %d",rPulseCount);
         }
+
+        //Get the current rmp of both wheels
         lRPM = (60000000.0f/(ppr*lTime));
         rRPM = (60000000.0f/(ppr*rTime));
+
+        //For each of these if statements: If the wheel is faster than the target rpm, slow it down, and vice versa
         if(lRPM>tRPM){
             Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()-pwrIncrement);
         }
@@ -168,11 +181,15 @@ void driveForward(float dist, float tRPM, float circ){
         else if(lRPM<tRPM){
             Wheel.Speed(Wheel.getSpeedRight()+pwrIncrement,Wheel.getSpeedLeft());
         }
+
+        //If both pulse counters are above or equal to the target, stop driving.
         if(rPulseCount>=pulseTarget && lPulseCount>=pulseTarget){
-            Wheel.Speed(0,0);
             rolling = false;
         }
     }
 
+    //Stop the wheels
+    Wheel.Speed(0.0, 0.0);
 
 }
+
