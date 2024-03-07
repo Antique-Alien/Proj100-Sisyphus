@@ -29,6 +29,14 @@ void simple_test();
 // Uses the non-blocking 
 void speed_test();
 
+/*
+driveForward: Propells the cart forward for a certain distance
+
+
+*/
+
 void driveForward(float,float,float);
+void rotateClockwise(float,float,float,float);
+
 
 #endif

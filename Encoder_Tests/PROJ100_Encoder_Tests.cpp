@@ -196,3 +196,65 @@ void driveForward(float dist, float tRPM, float circ){
 
 }
 
+void rotateClockwise(float angle, float tRPM, float circ, float width){
+    //Initialzing variables
+    int ppr = left_encoder.getPulsesPerRotation();
+    float rRPM; //Right RPM
+    float lRPM; //Left RPM
+    float dist = angle/360*width*3.141;
+    int rPulseCount; // Number of pulses on the Right
+    int lPulseCount; // Number of pulses on the Left
+    float numRotations = dist/circ; // number of rotations needed
+    int pulseTarget = floor(numRotations*ppr); // Number of pulses needed to reach the target
+
+
+    bool rolling = true; // Is the cart supposed to be driving 
+    int32_t lTime;
+    int32_t rTime;
+    float pwrIncrement = 0.0001; // Increment for changing power to the wheels
+
+Wheel.Speed(-0.5,0.5);
+    while(rolling){
+
+        lTime = left_encoder.getLastPulseTimeUs();
+        rTime = right_encoder.getLastPulseTimeUs();
+        //Increment the pulse counts if the pulse reader gets a new pulse.
+        if(lTime>0){
+            lPulseCount++;
+        }
+        if(rTime>0){
+        
+            rPulseCount++;
+        }
+
+        //Get the current rmp of both wheels
+        lRPM = (60000000.0f/(ppr*lTime));
+        rRPM = (60000000.0f/(ppr*rTime));
+
+        //For each of these if statements: If the wheel is faster than the target rpm, slow it down, and vice versa
+        if(lRPM>tRPM){
+            Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()+pwrIncrement);
+        }
+        else if(lRPM<tRPM){
+            Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()-pwrIncrement);
+        }
+        if(rRPM>tRPM){
+            Wheel.Speed(Wheel.getSpeedRight()-pwrIncrement,Wheel.getSpeedLeft());
+        }
+        else if(lRPM<tRPM){
+            Wheel.Speed(Wheel.getSpeedRight()+pwrIncrement,Wheel.getSpeedLeft());
+        }
+
+        //If both pulse counters are above or equal to the target, stop driving.
+        if(rPulseCount>=pulseTarget && lPulseCount>=pulseTarget){
+            rolling = false;
+        }
+    }
+
+    //Stop the wheels
+    Wheel.Speed(0.0, 0.0);
+
+
+
+}
+

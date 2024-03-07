@@ -12,7 +12,8 @@
 #define ENCODER_PIN_RIGHT           D6 
 #define PULSES_PER_ROTATION         20
 #define DEBOUNCE_US                 30000
-#define circumfrence                209
+#define circumfrence                209 // Circumfrence of wheel in mm
+#define width                       113.5 // width of Cart in mm
 
 DigitalIn microswitch1(D4);         //Instance of the DigitalIn class called 'microswitch1'
 DigitalIn microswitch2(D3);         //Instance of the DigitalIn class called 'microswitch2'
@@ -60,7 +61,7 @@ int main ()
 
     // simple_test();
     //speed_test();
-    driveForward(400,10,circumfrence);
+    rotateClockwise(90,50,circumfrence,width);
     while(true){
 
         // Write the parts of your code which should run in a loop between here..
