@@ -8,5 +8,10 @@ extern void tone1(void);
 extern void tone2(void);
 extern void PlayAll(void);
 extern void PlaySong(int i);
+extern void Frog(void);
+extern void Meglovania(void);
+extern void Rick(void);
+extern void Imperial(void);
+extern void RushE(void);
 
 #endif

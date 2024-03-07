@@ -68,8 +68,8 @@ void playMeglovania(PwmOut name){
 			name.period_us(periods_1us[n]);
 			name.write(0.5f);
 		}
-		//thread_sleep_for(durations_100us[n]/10);
-        wait_us(durations_100us[n]*100);
+		thread_sleep_for(durations_100us[n]/10);
+        //wait_us(durations_100us[n]*100);
 	}
 }
 
@@ -84,8 +84,8 @@ void playImperialMarch(PwmOut name){
 			name.period_us(periods_1us[n]);
 			name.write(0.5f);
 		}
-		//thread_sleep_for(durations_100us[n]/10);
-        wait_us(durations_100us[n]*100);
+		thread_sleep_for(durations_100us[n]/10);
+        //wait_us(durations_100us[n]*100);
 	}
 }
 
@@ -116,8 +116,8 @@ void playFrog(PwmOut name){
 			name.period_us(periods_1us[n]);
 			name.write(0.5f);
 		}
-		//thread_sleep_for(durations_100us[n]/10);
-        wait_us(durations_100us[n]*100);
+		thread_sleep_for(durations_100us[n]/10);
+        //wait_us(durations_100us[n]*100);
 	}
 }
 
@@ -132,8 +132,8 @@ void playRushE(PwmOut name){
 			name.period_us(periods_1us[n]);
 			name.write(0.5f);
 		}
-		wait_us(durations_100us[n]*100);
-        //thread_sleep_for(durations_100us[n]/10);
+		//wait_us(durations_100us[n]*100);
+        thread_sleep_for(durations_100us[n]/10);
 	}
 }
 //BUZZ BUZZ BUZZ

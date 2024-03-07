@@ -80,6 +80,27 @@ void twinkle(int s){
     buzzer.period_ms(TIME_PERIOD);
   }
 
+void Rick(void){
+    playRick(buzzer);
+}
+
+void Meglovania(void){
+    playMeglovania(buzzer);
+}
+
+void Imperial(void){
+    playImperialMarch(buzzer);
+}
+
+void RushE(void){
+    playRushE(buzzer);
+}
+
+void Frog(void){
+    playFrog(buzzer);
+}
+
+
 void PlayAll(void){
     playMeglovania(buzzer);
     playRushE(buzzer);

@@ -27,6 +27,7 @@ PROJ100_Encoder left_encoder(ENCODER_PIN_LEFT,PULSES_PER_ROTATION);     //Instan
 
 UnbufferedSerial ser(USBTX,USBRX,115200);   // Serial object for printing info
 
+Thread music_thread; //Create a seperate thread to play music on
 int main ()
 {
     // Clear the terminal and print an intro
@@ -61,6 +62,8 @@ int main ()
 
     // simple_test();
     //speed_test();
+    music_thread.start(Rick); // start playing Never Gonna Give You Up by Rick Astley on the music_thread thread
+
     rotateCounterClockwise(90,50,circumfrence,width);
     while(true){
         while(myButton == 0);
