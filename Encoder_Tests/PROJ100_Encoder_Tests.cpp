@@ -133,6 +133,8 @@ void speed_test(){
 
 
 void driveForward(float dist, float tRPM, float circ){
+
+    
     //Get constants
     int ppr = left_encoder.getPulsesPerRotation();
     float rRPM; //Right RPM
@@ -140,28 +142,29 @@ void driveForward(float dist, float tRPM, float circ){
     int rPulseCount; // Number of pulses on the Right
     int lPulseCount; // Number of pulses on the Left
     float numRotations = dist/circ; // number of rotations needed
-    int pulseTarget = floor(numRotations/ppr); // Number of pulses needed to reach the target
+
+
+
+    int pulseTarget = floor(numRotations*ppr); // Number of pulses needed to reach the target
+    
+    
     bool rolling = true; // Is the cart supposed to be driving
     int32_t lTime;
     int32_t rTime;
     float pwrIncrement = 0.0001; // Increment for changing power to the wheels
-    printf("Finished Setting up Variables\nInitalizing running loop\n");
-    printf("Target Number of Pulses: %d\n",pulseTarget);
     
+    Wheel.Speed(0.5,0.5);
     while(rolling){
 
         lTime = left_encoder.getLastPulseTimeUs();
         rTime = right_encoder.getLastPulseTimeUs();
-        printf("Got last pulse time\n");
         //Increment the pulse counts if the pulse reader gets a new pulse.
         if(lTime>0){
             lPulseCount++;
-            printf("Incremented left Pulse: %d\n",lPulseCount);
         }
         if(rTime>0){
         
             rPulseCount++;
-            printf("Increment Right Pulse: %d",rPulseCount);
         }
 
         //Get the current rmp of both wheels
@@ -170,16 +173,16 @@ void driveForward(float dist, float tRPM, float circ){
 
         //For each of these if statements: If the wheel is faster than the target rpm, slow it down, and vice versa
         if(lRPM>tRPM){
-            Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()-pwrIncrement);
-        }
-        else if(lRPM<tRPM){
             Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()+pwrIncrement);
         }
+        else if(lRPM<tRPM){
+            Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()-pwrIncrement);
+        }
         if(rRPM>tRPM){
-            Wheel.Speed(Wheel.getSpeedRight()-pwrIncrement,Wheel.getSpeedLeft());
+            Wheel.Speed(Wheel.getSpeedRight()+pwrIncrement,Wheel.getSpeedLeft());
         }
         else if(lRPM<tRPM){
-            Wheel.Speed(Wheel.getSpeedRight()+pwrIncrement,Wheel.getSpeedLeft());
+            Wheel.Speed(Wheel.getSpeedRight()-pwrIncrement,Wheel.getSpeedLeft());
         }
 
         //If both pulse counters are above or equal to the target, stop driving.
