@@ -63,7 +63,8 @@ int main ()
     //speed_test();
     rotateCounterClockwise(90,50,circumfrence,width);
     while(true){
-
+        while(myButton == 0);
+        rotateCounterClockwise(90,50,circumfrence,width);
         // Write the parts of your code which should run in a loop between here..
 
 
