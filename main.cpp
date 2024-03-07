@@ -61,7 +61,7 @@ int main ()
 
     // simple_test();
     //speed_test();
-    rotateClockwise(90,50,circumfrence,width);
+    rotateCounterClockwise(90,50,circumfrence,width);
     while(true){
 
         // Write the parts of your code which should run in a loop between here..
