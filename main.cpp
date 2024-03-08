@@ -77,18 +77,25 @@ int main ()
         // Write the parts of your code which should run in a loop between here..
         while(true)
         {
-            for(int x = 1; x <= 3; x++;) // run for 3 loops, as 4.28 loops covers width of board so 5 lane pushes needed in total
+            for(int x = 1; x <= 3; x++;) // run for 3 loops, as 4.28 lanes covers width of board so 5 lane pushes needed in total
             {
                 PushLane(); 
-                NextLane(200, 40);
+                NextLane(200, 40); // push 200mm and reverse 40mm for total of 160mm across to have overlap
             }
             //next section does the last pushes and 0.28 part of the board Maybe an boolean to only run once to allow looping to noext crash?
             PushLane(); //4th lane push
-            NextLane(40, 0); // drive 40mm to clear last part
+            NextLane(40, 0); // drive 40mm to clear last part, 44.8mm left if placed perfectly
             PushLane(); // final lane push
             // return to start and loop again?
             backtostart();
         }
+        /* 1 meter parallel line test
+        while(true)
+        {
+            driveForward(1000, 50, circumference) // drive 1m (1000mm)
+            rotateClockwise(180, 50, circumference, width); // rotate 180 degrees
+            driveForward(1000, 50, circumference) // drive 1m (1000mm)
+        } */
         // ..and here
 
     };
@@ -112,6 +119,7 @@ void NextLane(float fdist, float bdist)
 
 void backtostart()
 {
-   rotateCounterClockwise(90, 50, circumference, width);
+    rotateCounterClockwise(90, 50, circumference, width);
     driveForward(670, 50, circumference); // drive most of length to loop again 
+    rotateClockwise(90, 50, circumference, width);
 }
