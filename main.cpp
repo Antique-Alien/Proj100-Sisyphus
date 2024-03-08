@@ -10,9 +10,9 @@
 #define TIME_PERIOD 10             //Constant compiler Values here 10 equates to 10ms or 100Hz base Frequency
 #define ENCODER_PIN_LEFT            D8
 #define ENCODER_PIN_RIGHT           D6 
-#define PULSES_PER_ROTATION         20
+#define PULSES_PER_ROTATION         60
 #define DEBOUNCE_US                 30000
-#define circumfrence                209 // Circumfrence of wheel in mm
+#define circumference                209 // Circumference of wheel in mm
 #define width                       113.5 // width of Cart in mm
 
 DigitalIn microswitch1(D4);         //Instance of the DigitalIn class called 'microswitch1'
@@ -64,15 +64,35 @@ int main ()
     //speed_test();
     music_thread.start(Rick); // start playing Never Gonna Give You Up by Rick Astley on the music_thread thread
 
-    rotateCounterClockwise(90,50,circumfrence,width);
+    /*rotateCounterClockwise(90,50,circumference,width);
     while(true){
         while(myButton == 0);
-        rotateCounterClockwise(90,50,circumfrence,width);
+        rotateCounterClockwise(90,50,circumference,width);*/
+        
         // Write the parts of your code which should run in a loop between here..
-
-
-
-
+        while(true)
+        {
+            for(int x = 1; x <= 4; x++;) // run for 4 loops, as 4.28 loops covers width of board
+            {
+                driveForward(307, 50, circumference); // drive 307 mm up to arena divider
+                driveBackward(307, 50, circumference); // drive 307 mm back to arena end
+                rotateClockwise(90, 50, circumference, width); // rotate 90 degrees
+                driveForward(200, 50, circumference); // drive 200mm to clear bead in next lane
+                driveBackward(40, 50, circumference); // drive 307 mm back to cause overlap in bead clearance
+                rotateCounterClockwise(90, 50, circumference, width); // rotate 90 degrees back to push beads
+            }
+            //next section does the last push and 0.28 part of the board Maybe an boolean to only run once to allow looping to noext crash?
+            driveForward(307, 50, circumference); // drive 307 mm up to arena divider
+            driveBackward(307, 50, circumference); // drive 307 mm back to arena end
+            rotateClockwise(90, 50, circumference, width); 
+            driveForward(40, 50, circumference); // drive 40mm to clear last part
+            rotateCounterClockwise(90, 50, circumference, width); // rotate 90 degrees back to push beads
+            driveForward(307, 50, circumference); // drive 307 mm up to arena divider
+            driveBackward(307, 50, circumference); // drive 307 mm back to arena end
+            // return to start and loop again?
+            rotateCounterClockwise(90, 50, circumference, width);
+            driveForward(670, 50, circumference); // drive most of length to loop again
+        }
         // ..and here
 
     };
