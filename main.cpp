@@ -27,6 +27,11 @@ PROJ100_Encoder left_encoder(ENCODER_PIN_LEFT,PULSES_PER_ROTATION);     //Instan
 
 UnbufferedSerial ser(USBTX,USBRX,115200);   // Serial object for printing info
 
+// function names to run bead pushing
+void PushLane(); 
+void NextLane();
+void backtostart():
+
 Thread music_thread; //Create a seperate thread to play music on
 int main ()
 {
@@ -72,28 +77,41 @@ int main ()
         // Write the parts of your code which should run in a loop between here..
         while(true)
         {
-            for(int x = 1; x <= 4; x++;) // run for 4 loops, as 4.28 loops covers width of board
+            for(int x = 1; x <= 3; x++;) // run for 3 loops, as 4.28 loops covers width of board so 5 lane pushes needed in total
             {
-                driveForward(307, 50, circumference); // drive 307 mm up to arena divider
-                driveBackward(307, 50, circumference); // drive 307 mm back to arena end
-                rotateClockwise(90, 50, circumference, width); // rotate 90 degrees
-                driveForward(200, 50, circumference); // drive 200mm to clear bead in next lane
-                driveBackward(40, 50, circumference); // drive 307 mm back to cause overlap in bead clearance
-                rotateCounterClockwise(90, 50, circumference, width); // rotate 90 degrees back to push beads
+                PushLane(); 
+                NextLane(200, 40);
             }
-            //next section does the last push and 0.28 part of the board Maybe an boolean to only run once to allow looping to noext crash?
-            driveForward(307, 50, circumference); // drive 307 mm up to arena divider
-            driveBackward(307, 50, circumference); // drive 307 mm back to arena end
-            rotateClockwise(90, 50, circumference, width); 
-            driveForward(40, 50, circumference); // drive 40mm to clear last part
-            rotateCounterClockwise(90, 50, circumference, width); // rotate 90 degrees back to push beads
-            driveForward(307, 50, circumference); // drive 307 mm up to arena divider
-            driveBackward(307, 50, circumference); // drive 307 mm back to arena end
+            //next section does the last pushes and 0.28 part of the board Maybe an boolean to only run once to allow looping to noext crash?
+            PushLane(); //4th lane push
+            NextLane(40, 0); // drive 40mm to clear last part
+            PushLane(); // final lane push
             // return to start and loop again?
-            rotateCounterClockwise(90, 50, circumference, width);
-            driveForward(670, 50, circumference); // drive most of length to loop again
+            backtostart();
         }
         // ..and here
 
     };
+}
+
+// Pushes the lane and returns to start position, no varible as lane length is always the same
+void PushLane() 
+{
+    driveForward(307, 50, circumference); // drive 307 mm up to arena divider
+    driveBackward(307, 50, circumference); // drive 307 mm back to arena beginning
+}    
+
+// moves over to next lane, with 20mm overlap on previous lane, clears some beads from new lane
+void NextLane(float fdist, float bdist)
+{
+    rotateClockwise(90, 50, circumference, width); // rotate 90 degrees 
+    driveForward(fdist, 50, circumference); // drive 200mm to clear bead in next lane
+    driveBackward(bdist, 50, circumference); // drive 40 mm back to cause overlap after bead clearance
+    rotateCounterClockwise(90, 50, circumference, width); // rotate 90 degrees back to push beads
+}
+
+void backtostart()
+{
+   rotateCounterClockwise(90, 50, circumference, width);
+    driveForward(670, 50, circumference); // drive most of length to loop again 
 }
