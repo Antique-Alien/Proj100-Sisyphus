@@ -20,7 +20,8 @@ DigitalIn microswitch2(D3);         //Instance of the DigitalIn class called 'mi
 DigitalIn myButton(USER_BUTTON);    //Instance of the DigitalIn class called 'myButton'   
 DigitalOut greenLED(LED1);          //Instance of the DigitalOut class called 'greenLED'
 
-Motor Wheel(D13,D11,D9,D10);      //Instance of the Motor Class called 'Wheel' see motor.h and motor.cpp
+Motor Wheel(D13,A0,D9,D10);      //Instance of the Motor Class called 'Wheel' see motor.h and motor.cpp (The Pin A0 was originally D11, however this caused issues with the buzzer so I have set D0 as an input and then put a wire between A0 and D11)
+DigitalIn Pin(D11);
 
 PROJ100_Encoder right_encoder (ENCODER_PIN_RIGHT,PULSES_PER_ROTATION);  //Instance of the PROJ100Encoder class called 'right_encoder'
 PROJ100_Encoder left_encoder(ENCODER_PIN_LEFT,PULSES_PER_ROTATION);     //Instance of the PROJ100Encoder class called 'left_encoder'
@@ -32,7 +33,7 @@ void PushLane();
 //void NextLane(float fdist, float bdist);
 //void backtostart();
 
-//Thread music_thread; //Create a seperate thread to play music on
+Thread music_thread; //Create a seperate thread to play music on
 int main ()
 {
     // Clear the terminal and print an intro
@@ -67,7 +68,7 @@ int main ()
 
     // simple_test();
     //speed_test();
-    //music_thread.start(Imperial); // start playing Never Gonna Give You Up by Rick Astley on the music_thread thread
+    music_thread.start(PlayAll); // start playing music on the music_thread thread
 
     /*rotateCounterClockwise(90,50,circumference,width);
     while(true){
@@ -79,7 +80,7 @@ int main ()
         {
             for(int x = 1; x <= 3; x++) // run for 3 loops, as 4.28 lanes covers width of board so 5 lane pushes needed in total
             {
-                PushLane(); 
+                //PushLane(); 
                 //NextLane(200, 40); // push 200mm and reverse 40mm for total of 160mm across to have overlap
             }
         /*    //next section does the last pushes and 0.28 (44.8mm) part of the board 
