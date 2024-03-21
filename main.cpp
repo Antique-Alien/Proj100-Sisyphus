@@ -6,6 +6,7 @@
 #include "pwm_tone.h"
 #include "PROJ100_Encoder.h"
 #include "PROJ100_Encoder_Tests.h"
+#include <chrono>
 
 #define TIME_PERIOD 10             //Constant compiler Values here 10 equates to 10ms or 100Hz base Frequency
 #define ENCODER_PIN_LEFT            D8
@@ -15,7 +16,12 @@
 #define circumference               209 // Circumference of wheel in mm
 #define width                       113.5 // width of Cart in mm
 
-DigitalIn microswitch1(D4);         //Instance of the DigitalIn class called 'microswitch1'
+using chrono::seconds;
+using std::chrono::microseconds;
+using std::chrono::milliseconds;
+
+DigitalIn
+    microswitch1(D4); // Instance of the DigitalIn class called 'microswitch1'
 DigitalIn microswitch2(D3);         //Instance of the DigitalIn class called 'microswitch2'
 DigitalIn myButton(USER_BUTTON);    //Instance of the DigitalIn class called 'myButton'   
 DigitalOut greenLED(LED1);          //Instance of the DigitalOut class called 'greenLED'
@@ -74,7 +80,7 @@ int main ()
     //simple_test();
     //speed_test();
 
-    //music_thread.start(Frog); // start playing music on the music_thread thread
+    //music_thread.start(Imperial); // start playing music on the music_thread thread
 
     /*rotateCounterClockwise(90,50,circumference,width);
     while(true){
@@ -85,16 +91,16 @@ int main ()
         // Write the parts of your code which should run in a loop between here..
         while(true)
         {
-            fd(70);
-            bk(80);
-            fd(5);
-            rt(25);
-            fd(60);
-            lt(25);
-            bk(10);
-            fd(70);
-            bk(80);
-            fd(5);
+            for(int i = 0; i < 4; i++){
+                bk(20);
+                fd(100);
+                bk(120);
+                fd(5);
+                rt(25);
+                fd(50);
+                bk(10);
+                lt(25);
+            }
 
             /*for(int x = 1; x <= 3; x++) // run for 3 loops, as 4.28 lanes covers width of board so 5 lane pushes needed in total
             {
@@ -158,84 +164,102 @@ void backtostart()
     wait_us(500000);
 }*/
 
+//For Wheel.Speed it's (right motor, left motor)
+
 void fd(int gates){
+    Timer timeout;
+    timeout.start();
     int lcount = 0;
     int rcount = 0;
+    int timeouttime = gates / 20;
+    if (timeouttime == 0) timeouttime = 1;
 
-    Wheel.Speed(0.8,0.8);
+    Wheel.Speed(0.81,0.8);
                 while(true){
-                    
-                    if(left_encoder.pulseReceived()>0){
-                        lcount++;
+                  microseconds time = timeout.elapsed_time();
+                  if (left_encoder.pulseReceived() > 0) {
+                    lcount++;
                     }
                     if(right_encoder.pulseReceived()>0){
                         rcount++;
                     }
-                    if(rcount >= gates && lcount >= gates){
-                        Wheel.Speed(0.0,0.0);
-                        break;
+                    if ((rcount >= gates && lcount >= gates) || (time > seconds(timeouttime))) {
+                      Wheel.Speed(0.0, 0.0);
+                      break;
                     }
                 }
 }
 
 
 void bk(int gates){
+    Timer timeout;
+    timeout.start();
     int lcount = 0;
     int rcount = 0;
+    int timeouttime = gates / 20;
+    if (timeouttime == 0) timeouttime = 1;
 
-    Wheel.Speed(-0.8,-0.8);
+    Wheel.Speed(-0.8,-0.81);
                 while(true){
-                    
-                    if(left_encoder.pulseReceived()>0){
-                        lcount++;
+                  microseconds time = timeout.elapsed_time();
+                  if (left_encoder.pulseReceived() > 0) {
+                    lcount++;
                     }
                     if(right_encoder.pulseReceived()>0){
                         rcount++;
                     }
-                    if(rcount >= gates && lcount >= gates){
-                        Wheel.Speed(0.0,0.0);
-                        break;
+                    if ((rcount >= gates && lcount >= gates) || (time > seconds(timeouttime))) {
+                      Wheel.Speed(0.0, 0.0);
+                      break;
                     }
                 }
 }
 
 
 void rt(int gates){
+    Timer timeout;
+    timeout.start();
     int lcount = 0;
     int rcount = 0;
+    int timeouttime = gates / 10;
+    if (timeouttime == 0) timeouttime = 1;
 
     Wheel.Speed(-0.8,0.8);
                 while(true){
-                    
-                    if(left_encoder.pulseReceived()>0){
-                        lcount++;
+                  microseconds time = timeout.elapsed_time();
+                  if (left_encoder.pulseReceived() > 0) {
+                    lcount++;
                     }
                     if(right_encoder.pulseReceived()>0){
                         rcount++;
                     }
-                    if(rcount >= gates && lcount >= gates){
-                        Wheel.Speed(0.0,0.0);
-                        break;
+                    if ((rcount >= gates && lcount >= gates) || (time > seconds(timeouttime))) {
+                      Wheel.Speed(0.0, 0.0);
+                      break;
                     }
                 }
 }
 
 void lt(int gates){
+    Timer timeout;
+    timeout.start();
     int lcount = 0;
     int rcount = 0;
-
+    int timeouttime = gates / 10;
+    if (timeouttime == 0) timeouttime = 1;
+    
     Wheel.Speed(0.8,-0.8);
                 while(true){
-                    
-                    if(left_encoder.pulseReceived()>0){
-                        lcount++;
+                  microseconds time = timeout.elapsed_time();
+                  if (left_encoder.pulseReceived() > 0) {
+                    lcount++;
                     }
                     if(right_encoder.pulseReceived()>0){
                         rcount++;
                     }
-                    if(rcount >= gates && lcount >= gates){
-                        Wheel.Speed(0.0,0.0);
-                        break;
+                    if ((rcount >= gates && lcount >= gates) || (time > seconds(timeouttime))) {
+                      Wheel.Speed(0.0, 0.0);
+                      break;
                     }
                 }
 }
