@@ -33,6 +33,11 @@ void PushLane();
 //void NextLane(float fdist, float bdist);
 //void backtostart();
 
+void fd(int gates);
+void bk(int gates);
+void rt(int gates);
+void lt(int gates);
+
 Thread music_thread; //Create a seperate thread to play music on
 int main ()
 {
@@ -66,24 +71,37 @@ int main ()
     // If these lines are left in the lines below will never run
     /*************************************************/
 
-    // simple_test();
+    //simple_test();
     //speed_test();
-    music_thread.start(PlayAll); // start playing music on the music_thread thread
+
+    //music_thread.start(Frog); // start playing music on the music_thread thread
 
     /*rotateCounterClockwise(90,50,circumference,width);
     while(true){
         while(myButton == 0);
-        rotateCounterClockwise(90,50,circumference,width);*/
+        rotateCounterClockwise(90,50,circumference,width);
+        */
         
         // Write the parts of your code which should run in a loop between here..
         while(true)
         {
-            for(int x = 1; x <= 3; x++) // run for 3 loops, as 4.28 lanes covers width of board so 5 lane pushes needed in total
+            fd(70);
+            bk(80);
+            fd(5);
+            rt(25);
+            fd(60);
+            lt(25);
+            bk(10);
+            fd(70);
+            bk(80);
+            fd(5);
+
+            /*for(int x = 1; x <= 3; x++) // run for 3 loops, as 4.28 lanes covers width of board so 5 lane pushes needed in total
             {
-                //PushLane(); 
+                
                 //NextLane(200, 40); // push 200mm and reverse 40mm for total of 160mm across to have overlap
             }
-        /*    //next section does the last pushes and 0.28 (44.8mm) part of the board 
+           //next section does the last pushes and 0.28 (44.8mm) part of the board 
             PushLane(); //4th lane push
             NextLane(40, 0); // drive 40mm to clear last part, 44.8mm left if placed perfectly
             PushLane(); // final lane push
@@ -98,8 +116,9 @@ int main ()
             driveForward(1000, 50, circumference) // drive 1m (1000mm)
         } */
         // ..and here
+        }
 
-    };
+       
 }
 
 // Pushes the lane and returns to start position, no varible input as lane length is always the same
@@ -138,3 +157,85 @@ void backtostart()
     rotateClockwise(90, 50, circumference, width);
     wait_us(500000);
 }*/
+
+void fd(int gates){
+    int lcount = 0;
+    int rcount = 0;
+
+    Wheel.Speed(0.8,0.8);
+                while(true){
+                    
+                    if(left_encoder.pulseReceived()>0){
+                        lcount++;
+                    }
+                    if(right_encoder.pulseReceived()>0){
+                        rcount++;
+                    }
+                    if(rcount >= gates && lcount >= gates){
+                        Wheel.Speed(0.0,0.0);
+                        break;
+                    }
+                }
+}
+
+
+void bk(int gates){
+    int lcount = 0;
+    int rcount = 0;
+
+    Wheel.Speed(-0.8,-0.8);
+                while(true){
+                    
+                    if(left_encoder.pulseReceived()>0){
+                        lcount++;
+                    }
+                    if(right_encoder.pulseReceived()>0){
+                        rcount++;
+                    }
+                    if(rcount >= gates && lcount >= gates){
+                        Wheel.Speed(0.0,0.0);
+                        break;
+                    }
+                }
+}
+
+
+void rt(int gates){
+    int lcount = 0;
+    int rcount = 0;
+
+    Wheel.Speed(-0.8,0.8);
+                while(true){
+                    
+                    if(left_encoder.pulseReceived()>0){
+                        lcount++;
+                    }
+                    if(right_encoder.pulseReceived()>0){
+                        rcount++;
+                    }
+                    if(rcount >= gates && lcount >= gates){
+                        Wheel.Speed(0.0,0.0);
+                        break;
+                    }
+                }
+}
+
+void lt(int gates){
+    int lcount = 0;
+    int rcount = 0;
+
+    Wheel.Speed(0.8,-0.8);
+                while(true){
+                    
+                    if(left_encoder.pulseReceived()>0){
+                        lcount++;
+                    }
+                    if(right_encoder.pulseReceived()>0){
+                        rcount++;
+                    }
+                    if(rcount >= gates && lcount >= gates){
+                        Wheel.Speed(0.0,0.0);
+                        break;
+                    }
+                }
+}

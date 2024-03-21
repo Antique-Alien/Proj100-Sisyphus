@@ -169,7 +169,7 @@ void driveForward(float dist, float tRPM, float circ){
             rPulseCount++;
         }
 
-        //Get the current rmp of both wheels
+        //Get the current rpm of both wheels
         lRPM = (60000000.0f/(ppr*lTime));
         rRPM = (60000000.0f/(ppr*rTime));
 
@@ -191,8 +191,8 @@ void driveForward(float dist, float tRPM, float circ){
         if(rPulseCount>=pulseTarget && lPulseCount>=pulseTarget){
             rolling = false;
         }
+        
     }
-
     //Stop the wheels
     Wheel.Speed(0.0, 0.0);
 
