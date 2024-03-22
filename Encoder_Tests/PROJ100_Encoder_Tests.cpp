@@ -2,7 +2,7 @@
 #include "PROJ100_Encoder.h"
 #include "PROJ100_Encoder_Tests.h"
 #include "motor.h"
-
+#include <chrono>
 
 //*************************************Simple test***********************************************//
 // Uses the encoder to measure the time between pulses using a Timer object t.
@@ -133,7 +133,7 @@ void speed_test(){
 //Home made Functions
 
 float pwrIncrement = 0.001;
-
+Timer SpeedTimer;
 void driveForward(float dist, float tRPM, float circ){
 
     
@@ -155,8 +155,10 @@ void driveForward(float dist, float tRPM, float circ){
     int32_t rTime;
     float pwrIncrement = 0.0001; // Increment for changing power to the wheels
     
-    Wheel.Speed(0.5,0.5);
+    Wheel.Speed(0.8,0.8);
+    SpeedTimer.start();
     while(rolling){
+        
 
         lTime = left_encoder.getLastPulseTimeUs();
         rTime = right_encoder.getLastPulseTimeUs();
@@ -172,21 +174,23 @@ void driveForward(float dist, float tRPM, float circ){
         //Get the current rpm of both wheels
         lRPM = (60000000.0f/(ppr*lTime));
         rRPM = (60000000.0f/(ppr*rTime));
-
+        std::chrono::microseconds sTimer = SpeedTimer.elapsed_time();
+        if(sTimer >= 200ms)
+        {
         //For each of these if statements: If the wheel is faster than the target rpm, slow it down, and vice versa
-        if(lRPM>tRPM){
-            Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()+pwrIncrement);
+            if(lRPM>tRPM){
+                Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()+pwrIncrement);
+            }
+            else if(lRPM<tRPM){
+                Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()-pwrIncrement);
+            }
+            if(rRPM>tRPM){
+                Wheel.Speed(Wheel.getSpeedRight()+pwrIncrement,Wheel.getSpeedLeft());
+            }
+            else if(lRPM<tRPM){
+                Wheel.Speed(Wheel.getSpeedRight()-pwrIncrement,Wheel.getSpeedLeft());
+            }
         }
-        else if(lRPM<tRPM){
-            Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()-pwrIncrement);
-        }
-        if(rRPM>tRPM){
-            Wheel.Speed(Wheel.getSpeedRight()+pwrIncrement,Wheel.getSpeedLeft());
-        }
-        else if(lRPM<tRPM){
-            Wheel.Speed(Wheel.getSpeedRight()-pwrIncrement,Wheel.getSpeedLeft());
-        }
-
         //If both pulse counters are above or equal to the target, stop driving.
         if(rPulseCount>=pulseTarget && lPulseCount>=pulseTarget){
             rolling = false;
@@ -195,7 +199,8 @@ void driveForward(float dist, float tRPM, float circ){
     }
     //Stop the wheels
     Wheel.Speed(0.0, 0.0);
-
+    SpeedTimer.stop();
+    SpeedTimer.reset();
 }
 
 void driveBackward(float dist, float tRPM, float circ){
@@ -219,7 +224,8 @@ void driveBackward(float dist, float tRPM, float circ){
     int32_t rTime;
     //float pwrIncrement = 0.0001; // Increment for changing power to the wheels
     
-    Wheel.Speed(-0.5,-0.5);
+    Wheel.Speed(-0.8,-0.8);
+    SpeedTimer.start();
     while(rolling){
 
         lTime = left_encoder.getLastPulseTimeUs();
@@ -237,20 +243,23 @@ void driveBackward(float dist, float tRPM, float circ){
         lRPM = (60000000.0f/(ppr*lTime));
         rRPM = (60000000.0f/(ppr*rTime));
 
-        //For each of these if statements: If the wheel is faster than the target rpm, slow it down, and vice versa
-        if(lRPM>tRPM){
-            Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()-pwrIncrement);
-        }
-        else if(lRPM<tRPM){
-            Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()+pwrIncrement);
-        }
-        if(rRPM>tRPM){
-            Wheel.Speed(Wheel.getSpeedRight()-pwrIncrement,Wheel.getSpeedLeft());
-        }
-        else if(lRPM<tRPM){
-            Wheel.Speed(Wheel.getSpeedRight()+pwrIncrement,Wheel.getSpeedLeft());
-        }
+        std::chrono::microseconds sTimer = SpeedTimer.elapsed_time();
+        if(sTimer >= 200ms){
 
+            //For each of these if statements: If the wheel is faster than the target rpm, slow it down, and vice versa
+            if(lRPM>tRPM){
+                Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()-pwrIncrement);
+            }
+            else if(lRPM<tRPM){
+                Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()+pwrIncrement);
+            }
+            if(rRPM>tRPM){
+                Wheel.Speed(Wheel.getSpeedRight()-pwrIncrement,Wheel.getSpeedLeft());
+            }
+            else if(lRPM<tRPM){
+                Wheel.Speed(Wheel.getSpeedRight()+pwrIncrement,Wheel.getSpeedLeft());
+            }
+        }
         //If both pulse counters are above or equal to the target, stop driving.
         if(rPulseCount>=pulseTarget && lPulseCount>=pulseTarget){
             rolling = false;
@@ -259,8 +268,10 @@ void driveBackward(float dist, float tRPM, float circ){
 
     //Stop the wheels
     Wheel.Speed(0.0, 0.0);
-
+    SpeedTimer.stop();
+    SpeedTimer.reset();
 }
+
 
 void rotateClockwise(float angle, float tRPM, float circ, float width){
     //Initialzing variables
@@ -279,7 +290,8 @@ void rotateClockwise(float angle, float tRPM, float circ, float width){
     int32_t rTime;
 //    float pwrIncrement = 0.0001; // Increment for changing power to the wheels
 
-    Wheel.Speed(-0.5,0.5);
+    Wheel.Speed(-0.8,0.8);
+    SpeedTimer.start();
     while(rolling){
 
         lTime = left_encoder.getLastPulseTimeUs();
@@ -296,21 +308,22 @@ void rotateClockwise(float angle, float tRPM, float circ, float width){
         //Get the current rmp of both wheels
         lRPM = (60000000.0f/(ppr*lTime));
         rRPM = (60000000.0f/(ppr*rTime));
-
-        //For each of these if statements: If the wheel is faster than the target rpm, slow it down, and vice versa
-        if(lRPM>tRPM){
-            Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()+pwrIncrement);
+        std::chrono::microseconds sTimer = SpeedTimer.elapsed_time();
+        if(sTimer >= 200ms){
+            //For each of these if statements: If the wheel is faster than the target rpm, slow it down, and vice versa
+            if(lRPM>tRPM){
+                Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()+pwrIncrement);
+            }
+            else if(lRPM<tRPM){
+                Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()-pwrIncrement);
+            }
+            if(rRPM>tRPM){
+                Wheel.Speed(Wheel.getSpeedRight()-pwrIncrement,Wheel.getSpeedLeft());
+            }
+            else if(lRPM<tRPM){
+                Wheel.Speed(Wheel.getSpeedRight()+pwrIncrement,Wheel.getSpeedLeft());
+            }
         }
-        else if(lRPM<tRPM){
-            Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()-pwrIncrement);
-        }
-        if(rRPM>tRPM){
-            Wheel.Speed(Wheel.getSpeedRight()-pwrIncrement,Wheel.getSpeedLeft());
-        }
-        else if(lRPM<tRPM){
-            Wheel.Speed(Wheel.getSpeedRight()+pwrIncrement,Wheel.getSpeedLeft());
-        }
-
         //If both pulse counters are above or equal to the target, stop driving.
         if(rPulseCount>=pulseTarget && lPulseCount>=pulseTarget){
             rolling = false;
@@ -319,9 +332,8 @@ void rotateClockwise(float angle, float tRPM, float circ, float width){
 
     //Stop the wheels
     Wheel.Speed(0.0, 0.0);
-
-
-
+    SpeedTimer.stop();
+    SpeedTimer.reset();
 }
 
 void rotateCounterClockwise(float angle, float tRPM, float circ, float width){
@@ -341,7 +353,8 @@ void rotateCounterClockwise(float angle, float tRPM, float circ, float width){
     int32_t rTime;
 //    float pwrIncrement = 0.0001; // Increment for changing power to the wheels
 
-    Wheel.Speed(0.5,-0.5);
+    Wheel.Speed(0.8,-0.8);
+    SpeedTimer.start();
     while(rolling){
 
         lTime = left_encoder.getLastPulseTimeUs();
@@ -358,21 +371,22 @@ void rotateCounterClockwise(float angle, float tRPM, float circ, float width){
         //Get the current rmp of both wheels
         lRPM = (60000000.0f/(ppr*lTime));
         rRPM = (60000000.0f/(ppr*rTime));
-
-        //For each of these if statements: If the wheel is faster than the target rpm, slow it down, and vice versa
-        if(lRPM>tRPM){
-            Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()-pwrIncrement);
+        std::chrono::microseconds sTimer = SpeedTimer.elapsed_time();
+        if(sTimer >= 200ms){
+            //For each of these if statements: If the wheel is faster than the target rpm, slow it down, and vice versa
+            if(lRPM>tRPM){
+                Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()-pwrIncrement);
+            }
+            else if(lRPM<tRPM){
+                Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()+pwrIncrement);
+            }
+            if(rRPM>tRPM){
+                Wheel.Speed(Wheel.getSpeedRight()+pwrIncrement,Wheel.getSpeedLeft());
+            }
+            else if(lRPM<tRPM){
+                Wheel.Speed(Wheel.getSpeedRight()-pwrIncrement,Wheel.getSpeedLeft());
+            }
         }
-        else if(lRPM<tRPM){
-            Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()+pwrIncrement);
-        }
-        if(rRPM>tRPM){
-            Wheel.Speed(Wheel.getSpeedRight()+pwrIncrement,Wheel.getSpeedLeft());
-        }
-        else if(lRPM<tRPM){
-            Wheel.Speed(Wheel.getSpeedRight()-pwrIncrement,Wheel.getSpeedLeft());
-        }
-
         //If both pulse counters are above or equal to the target, stop driving.
         if(rPulseCount>=pulseTarget && lPulseCount>=pulseTarget){
             rolling = false;
@@ -382,7 +396,6 @@ void rotateCounterClockwise(float angle, float tRPM, float circ, float width){
 
     //Stop the wheels
     Wheel.Speed(0.0, 0.0);
-
-
-
+    SpeedTimer.stop();
+    SpeedTimer.reset();
 }

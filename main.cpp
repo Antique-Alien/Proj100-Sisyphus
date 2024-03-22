@@ -36,8 +36,8 @@ UnbufferedSerial ser(USBTX,USBRX,115200);   // Serial object for printing info
 
 // function names to run bead pushing
 void PushLane(); 
-//void NextLane(float fdist, float bdist);
-//void backtostart();
+void NextLane(float fdist, float bdist);
+void backtostart();
 
 void fd(int gates);
 void bk(int gates);
@@ -91,30 +91,24 @@ int main ()
         // Write the parts of your code which should run in a loop between here..
         while(true)
         {
-            for(int i = 0; i < 4; i++){
-                bk(20);
-                fd(100);
-                bk(120);
-                fd(5);
-                rt(25);
-                fd(50);
-                bk(10);
-                lt(25);
-            }
+            
 
-            /*for(int x = 1; x <= 3; x++) // run for 3 loops, as 4.28 lanes covers width of board so 5 lane pushes needed in total
+            for(int x = 1; x <= 3; x++) // run for 3 loops, as 4.28 lanes covers width of board so 5 lane pushes needed in total
             {
-                
-                //NextLane(200, 40); // push 200mm and reverse 40mm for total of 160mm across to have overlap
+                PushLane();
+                NextLane(200, 40); // push 200mm and reverse 40mm for total of 160mm across to have overlap
             }
            //next section does the last pushes and 0.28 (44.8mm) part of the board 
             PushLane(); //4th lane push
+
+            //To add a curved turn to scoop more beads
+
             NextLane(40, 0); // drive 40mm to clear last part, 44.8mm left if placed perfectly
             PushLane(); // final lane push
             // return to start and loop again?
             backtostart();
-        */
-        /* 1 meter parallel line test
+        
+        /*//1 meter parallel line test
         while(true)
         {
             driveForward(1000, 50, circumference) // drive 1m (1000mm)
@@ -130,42 +124,48 @@ int main ()
 // Pushes the lane and returns to start position, no varible input as lane length is always the same
 void PushLane() 
 {
-    driveForward(200, 50, circumference); // drive 307 mm up to arena divider
-    wait_us(500000);
-    rotateCounterClockwise(180, 50, circumference, width); // rotate 90 degrees back to push beads
-    wait_us(500000);
-    rotateClockwise(180, 50, circumference, width);
-    wait_us(500000);
-    driveBackward(200, 50, circumference); // drive 307 mm back to arena beginning
-    wait_us(500000);
+    driveForward(307, 20, circumference); // drive 307 mm up to arena divider
+    driveBackward(320, 20, circumference); // drive 307 mm back to arena beginning
+
 }    
 
 // moves over to next lane, with 20mm overlap on previous lane, clears some beads from new lane
-/*void NextLane(float fdist, float bdist)
-{
-    rotateClockwise(90, 50, circumference, width); // rotate 90 degrees 
-    wait_us(500000);
-    driveForward(fdist, 50, circumference); // drive 200mm to clear bead in next lane
-    wait_us(500000);
-    driveBackward(bdist, 50, circumference); // drive 40 mm back to cause overlap after bead clearance
-    wait_us(500000);
+void NextLane(float fdist, float bdist)
+{       
+    wait_us(200000); // Use of waits seems to help keep the turning more accurate
+    driveForward(30, 20, circumference);
+    wait_us(200000);
+    rotateClockwise(90, 20, circumference, width); // rotate 90 degrees 
+    wait_us(200000);
+    driveForward(fdist, 20, circumference); // drive 200mm to clear bead in next lane
+    wait_us(200000);
+    driveBackward(bdist, 20, circumference); // drive 40 mm back to cause overlap after bead clearance
+    wait_us(200000);
     rotateCounterClockwise(90, 50, circumference, width); // rotate 90 degrees back to push beads
-    wait_us(500000);
-    
+    wait_us(200000);
+    driveBackward(60, 20, circumference);
 }
 
 void backtostart()
 {
-    rotateCounterClockwise(90, 50, circumference, width);
-    wait_us(500000);
-    driveForward(400, 50, circumference); // drive most of length to loop again 
-    wait_us(500000);
-    rotateClockwise(90, 50, circumference, width);
-    wait_us(500000);
-}*/
+    rotateCounterClockwise(90, 20, circumference, width);
+    wait_us(200000);
+    driveForward(500, 20, circumference); // drive most of length to loop again 
+    wait_us(200000);
+    rotateClockwise(90, 20, circumference, width);
+}
 
 //For Wheel.Speed it's (right motor, left motor)
-
+/*for(int i = 0; i < 4; i++){
+                bk(20);
+                fd(100);
+                bk(120);
+                fd(5);
+                rt(25);
+                fd(50);
+                bk(10);
+                lt(25);
+            }
 void fd(int gates){
     Timer timeout;
     timeout.start();
@@ -263,3 +263,4 @@ void lt(int gates){
                     }
                 }
 }
+*/
