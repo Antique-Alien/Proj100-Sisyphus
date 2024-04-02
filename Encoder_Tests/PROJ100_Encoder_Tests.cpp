@@ -10,6 +10,9 @@
 // detected since the last call, 0 if no pulse has been detected since the last call, -1 if the 
 // wheel is stationary and -2 if there is an error
 
+DigitalIn microswitch1(D4);         //Instance of the DigitalIn class called 'microswitch1'
+DigitalIn microswitch2(D3);         //Instance of the DigitalIn class called 'microswitch2'
+
 void simple_test(){
     // Variables and objects
     DigitalOut led(LED1);       // We will toggle an LED every time we get a pulse
@@ -214,10 +217,7 @@ void driveBackward(float dist, float tRPM, float circ){
     int lPulseCount; // Number of pulses on the Left
     float numRotations = dist/circ; // number of rotations needed
 
-
-
     int pulseTarget = floor(numRotations*ppr); // Number of pulses needed to reach the target
-    
     
     bool rolling = true; // Is the cart supposed to be driving
     int32_t lTime;
@@ -261,7 +261,10 @@ void driveBackward(float dist, float tRPM, float circ){
             }
         }
         //If both pulse counters are above or equal to the target, stop driving.
-        if(rPulseCount>=pulseTarget && lPulseCount>=pulseTarget){
+        if(microswitch1 == 1 && microswitch2 == 1)
+        {
+            wait_us(1000000); 
+        //(rPulseCount>=pulseTarget && lPulseCount>=pulseTarget){
             rolling = false;
         }
     }
