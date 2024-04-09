@@ -20,8 +20,8 @@ using chrono::seconds;
 using std::chrono::microseconds;
 using std::chrono::milliseconds;
 
-DigitalIn microswitch1(D4);         //Instance of the DigitalIn class called 'microswitch1'
-DigitalIn microswitch2(D3);         //Instance of the DigitalIn class called 'microswitch2'
+//DigitalIn microswitch1(D4);         //Instance of the DigitalIn class called 'microswitch1'
+//DigitalIn microswitch2(D3);         //Instance of the DigitalIn class called 'microswitch2'
 DigitalIn myButton(USER_BUTTON);    //Instance of the DigitalIn class called 'myButton'   
 DigitalOut greenLED(LED1);          //Instance of the DigitalOut class called 'greenLED'
 
@@ -103,9 +103,9 @@ int main ()
             TurnLeft(90);
             driveBackward(100, 20, circumference);
             //To add a curved turn to scoop more beads
-
+            wait_us(100000000);
             //NextLane(40, 0); // drive 40mm to clear last part, 44.8mm left if placed perfectly
-            PushLane(); // final lane push
+            //PushLane(); // final lane push
             // return to start and loop again?
             backtostart();
         
@@ -118,7 +118,33 @@ int main ()
         } */
         // ..and here
         }
+while(Parallel == true) //for menu selection boolean
+{
+    //Initialzing variables
+    int fdistance = 1000; // total milimetre needed to drive
+    int rPulseCount = 0; // Number of pulses on the Right, zeroed to ensure count is accurate
+    int lPulseCount = 0; // Number of pulses on the Left, zeroed to ensure count is accurate
+    // Determines the how many full and partial rotataions needed for the distance input and then how many pulses to achieve it
+    float numRotations = fdistance/circumference;
+    float target_pulse = floor(numRotations*PULSES_PER_ROTATION);
 
+    Wheel.Speed(0.8,0.8);
+    // Run until number of pulses calcualted in fucntion are reached 
+    while(rPulseCount<=target_pulse && lPulseCount<=target_pulse)
+    {
+        
+        if (left_encoder.pulseReceived() == 1) //encoders are backwards
+        {
+            rPulseCount++;
+        }
+        if (right_encoder.pulseReceived() == 1)
+        {
+            lPulseCount++;
+        }
+    }
+    //Stop the wheels
+    Wheel.Speed(0.0, 0.0);
+}
        
 }
 
@@ -156,6 +182,46 @@ void backtostart()
     rotateClockwise(90, 20, circumference, width);
 }
 
+void TurnLeft(float angle) // to be tested
+{
+    //Initialzing variables
+    int rPulseCount = 0; // Number of pulses on the Right, zeroed to ensure count is accurate
+    int lPulseCount = 0; // Number of pulses on the Left, zeroed to ensure count is accurate
+    
+    // Determines the how many full and partial rotataions needed for the distance input and then how many pulses to achieve it
+    float outwheel = width*2; //outer wheel moves twice as far
+    // calculated distance for each wheel of buggy's axis
+    float indist = (angle/360)*width*3.141; 
+    float outdist = (angle/360)*outwheel*3.141; 
+    // calculate number of rotations needed
+    float inRotations = indist/circumference; 
+    float outRotations = outdist/circumference;
+    //calculates the number of pulses needed for each wheel
+    float inpulse = floor(inRotations*PULSES_PER_ROTATION); 
+    float outpulse = ceil(outRotations*PULSES_PER_ROTATION) + 12; //changes to ceil wasn't 90 degrees, then added 10 for accuracy on my table
+    printf("inpulse = %f\n", inpulse); //calculates 25
+    printf("outpulse = %f\n", outpulse); // calculates 52 + 2 = 54
+    // Run until number of pulses calcualted in fucntion are reached
+    Wheel.Speed(0.8,0.4); // out wheel needs to move twice as fast to turn the total pulses the same number of times
+    while(rPulseCount<=outpulse && lPulseCount<=inpulse)
+    {
+        //SpeedControl(); Working on it currently
+        if (left_encoder.pulseReceived() == 1) // encoders are mounted backwards
+        {
+            rPulseCount++;
+            
+        }
+        if (right_encoder.pulseReceived() == 1)
+        {
+            lPulseCount++;
+            
+        }
+        printf("lPulsecount = %d\n", lPulseCount);
+        printf("rPulsecount = %d\n", rPulseCount);
+    }
+    //Stop the wheels
+    Wheel.Speed(0.0, 0.0);
+}
 
 
 
@@ -268,34 +334,3 @@ void lt(int gates){
                 }
 }
 */
-void TurnLeft(float angle) // to be tested
-{
-    //Initialzing variables
-    int rPulseCount = 0; // Number of pulses on the Right, zeroed to ensure count is accurate
-    int lPulseCount = 0; // Number of pulses on the Left, zeroed to ensure count is accurate
-    
-    // Determines the how many full and partial rotataions needed for the distance input and then how many pulses to achieve it
-    float outwheel = width*2; // wheels need different turning radius for total number of rotations
-    float indist = angle/360*width*3.141; // calculated to turn for inner wheel of buggy's axis
-    float outdist = angle/360*outwheel*3.141; // calculated to turn for outer of buggy's axis
-    float inRotations = indist/circumference; // calculate number of rotations needed
-    float outRotations = outdist/circumference;
-    float inpulse = floor(inRotations*PULSES_PER_ROTATION); //calculatesthe number of pulses needed
-    float outpulse = floor(outRotations*PULSES_PER_ROTATION);
-    // Run until number of pulses calcualted in fucntion are reached
-    Wheel.Speed(0.4,0.8); // out wheel needs to move twice as fast to turn the total pulses the same number of times
-    while(rPulseCount<=outpulse && lPulseCount<=inpulse)
-    {
-        //SpeedControl(); Working on it currently
-        if (left_encoder.pulseReceived() == 1)
-        {
-            lPulseCount++;
-        }
-        if (right_encoder.pulseReceived() == 1)
-        {
-            rPulseCount++;
-        }
-    }
-    //Stop the wheels
-    Wheel.Speed(0.0, 0.0);
-}
