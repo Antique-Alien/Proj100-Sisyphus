@@ -9,8 +9,8 @@
 #include <chrono>
 
 #define TIME_PERIOD 10             //Constant compiler Values here 10 equates to 10ms or 100Hz base Frequency
-#define ENCODER_PIN_LEFT            D8
-#define ENCODER_PIN_RIGHT           D6 
+#define ENCODER_PIN_LEFT            D6 // Swapped from D8 to D6
+#define ENCODER_PIN_RIGHT           D8 // Swapped from D6 to D8
 #define PULSES_PER_ROTATION         60
 #define DEBOUNCE_US                 30000
 #define circumference               209 // Circumference of wheel in mm
@@ -39,6 +39,7 @@ void NextLane(float fdist, float bdist);
 void backtostart();
 void TurnLeft(float angle);
 
+void slowforward();
 void fd(int gates);
 void bk(int gates);
 void rt(int gates);
@@ -118,33 +119,53 @@ int main ()
         } */
         // ..and here
         }
-while(Parallel == true) //for menu selection boolean
+/*while(Parallel == true) //menu selection boolean
 {
-    //Initialzing variables
-    int fdistance = 1000; // total milimetre needed to drive
-    int rPulseCount = 0; // Number of pulses on the Right, zeroed to ensure count is accurate
-    int lPulseCount = 0; // Number of pulses on the Left, zeroed to ensure count is accurate
-    // Determines the how many full and partial rotataions needed for the distance input and then how many pulses to achieve it
-    float numRotations = fdistance/circumference;
-    float target_pulse = floor(numRotations*PULSES_PER_ROTATION);
-
-    Wheel.Speed(0.8,0.8);
-    // Run until number of pulses calcualted in fucntion are reached 
-    while(rPulseCount<=target_pulse && lPulseCount<=target_pulse)
+    void slowforward();
     {
-        
-        if (left_encoder.pulseReceived() == 1) //encoders are backwards
+        //Initialzing variables
+        int fdistance = 1000; // total milimetre needed to drive
+        int rPulseCount = 0; // Number of pulses on the Right, zeroed to ensure count is accurate
+        int lPulseCount = 0; // Number of pulses on the Left, zeroed to ensure count is accurate
+        // Determines the how many full and partial rotataions needed for the distance input and then how many pulses to achieve it
+        float numRotations = fdistance/circumference;
+        float target_pulse = floor(numRotations*PULSES_PER_ROTATION);
+
+        Wheel.Speed(0.8,0.8);
+        // Run until number of pulses calcualted in fucntion are reached 
+        while(rPulseCount<=target_pulse && lPulseCount<=target_pulse)
         {
-            rPulseCount++;
+            
+            if (left_encoder.pulseReceived() == 1) //encoders are backwards
+            {
+                lPulseCount++;
+            }
+            if (right_encoder.pulseReceived() == 1)
+            {
+                rPulseCount++;
+            }
+            // check pulses against each other and 
+            if leftpulse < rightpulse
+                {
+                    Wheel.Speed(0.0,0.8);
+                }
+            if leftpulse > rightpulse
+                {
+                    Wheel.Speed(0.8,0.0);
+                }
+            if leftpulse == rightpulse
+                {
+                    Wheel.Speed(0.8,0.8);
+                }
         }
-        if (right_encoder.pulseReceived() == 1)
-        {
-            lPulseCount++;
-        }
-    }
+    
     //Stop the wheels
     Wheel.Speed(0.0, 0.0);
-}
+    }
+    slowforward();
+    rotateClockwise(180, 20, circumference, width);
+    slowforward();
+}*/
        
 }
 
@@ -198,20 +219,20 @@ void TurnLeft(float angle) // to be tested
     float outRotations = outdist/circumference;
     //calculates the number of pulses needed for each wheel
     float inpulse = floor(inRotations*PULSES_PER_ROTATION); 
-    float outpulse = ceil(outRotations*PULSES_PER_ROTATION) + 12; //changes to ceil wasn't 90 degrees, then added 10 for accuracy on my table
+    float outpulse = ceil(outRotations*PULSES_PER_ROTATION) + 12; //changes to ceil wasn't 90 degrees, then added 12 for accuracy on my table, top be tested in arena
     printf("inpulse = %f\n", inpulse); //calculates 25
     printf("outpulse = %f\n", outpulse); // calculates 52 + 2 = 54
-    // Run until number of pulses calcualted in fucntion are reached
+    // Run until number of pulses calcualted in functions are reached
     Wheel.Speed(0.8,0.4); // out wheel needs to move twice as fast to turn the total pulses the same number of times
     while(rPulseCount<=outpulse && lPulseCount<=inpulse)
     {
         //SpeedControl(); Working on it currently
-        if (left_encoder.pulseReceived() == 1) // encoders are mounted backwards
+        if (right_encoder.pulseReceived() == 1) // encoders were mounted backwards, changed digital input definition.
         {
             rPulseCount++;
             
         }
-        if (right_encoder.pulseReceived() == 1)
+        if (left_encoder.pulseReceived() == 1)
         {
             lPulseCount++;
             
