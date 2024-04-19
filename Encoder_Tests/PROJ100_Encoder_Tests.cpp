@@ -263,7 +263,7 @@ void driveBackward(float dist, float tRPM, float circ){
         //If both pulse counters are above or equal to the target, stop driving.
         if(rPulseCount>=pulseTarget && lPulseCount>=pulseTarget)
         {
-            wait_us(1000000); 
+            //wait_us(1000000); 
         //(microswitch1 == 1 && microswitch2 == 1){
             rolling = false;
         }

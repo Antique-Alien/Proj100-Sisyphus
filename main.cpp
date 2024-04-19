@@ -39,12 +39,6 @@ void NextLane(float fdist, float bdist);
 void backtostart();
 void TurnLeft(float angle);
 
-void slowforward();
-void fd(int gates);
-void bk(int gates);
-void rt(int gates);
-void lt(int gates);
-
 Thread music_thread; //Create a seperate thread to play music on
 int main ()
 {
@@ -81,7 +75,7 @@ int main ()
     //simple_test();
     //speed_test();
 
-    //music_thread.start(Imperial); // start playing music on the music_thread thread
+    music_thread.start(Imperial); // start playing music on the music_thread thread
 
     /*rotateCounterClockwise(90,50,circumference,width);
     while(true){
@@ -92,23 +86,28 @@ int main ()
         // Write the parts of your code which should run in a loop between here..
         while(true)
         {
-            
+            //driveForward(1000, 20, circumference); // drive 1m (1000mm)
+            rotateClockwise(202, 20, circumference, width); // changed to 202 for friction adjustment....rotate 180 degrees
+            //driveForward(1000, 20, circumference); // drive 1m (1000mm)
+            wait_us(5000000);
 
-            for(int x = 1; x <= 3; x++) // run for 3 loops, as 4.28 lanes covers width of board so 5 lane pushes needed in total
+            /*for(int x = 1; x <= 3; x++) // run for 3 loops, as 4.28 lanes covers width of board so 5 lane pushes needed in total
             {
                 PushLane();
                 NextLane(200, 40); // push 200mm and reverse 40mm for total of 160mm across to have overlap
             }
            //next section does the last pushes and 0.28 (44.8mm) part of the board 
             PushLane(); //4th lane push
+            rotateClockwise(90, 20, circumference, width); // rotate 90 degrees
             TurnLeft(90);
-            driveBackward(100, 20, circumference);
+            driveForward(200, 20, circumference);
+            driveBackward(320, 20, circumference);
             //To add a curved turn to scoop more beads
-            wait_us(100000000);
+            //wait_us(100000000);
             //NextLane(40, 0); // drive 40mm to clear last part, 44.8mm left if placed perfectly
             //PushLane(); // final lane push
             // return to start and loop again?
-            backtostart();
+            backtostart();*/
         
         /*//1 meter parallel line test
         while(true)
@@ -120,51 +119,7 @@ int main ()
         // ..and here
         }
 /*while(Parallel == true) //menu selection boolean
-{
-    void slowforward();
-    {
-        //Initialzing variables
-        int fdistance = 1000; // total milimetre needed to drive
-        int rPulseCount = 0; // Number of pulses on the Right, zeroed to ensure count is accurate
-        int lPulseCount = 0; // Number of pulses on the Left, zeroed to ensure count is accurate
-        // Determines the how many full and partial rotataions needed for the distance input and then how many pulses to achieve it
-        float numRotations = fdistance/circumference;
-        float target_pulse = floor(numRotations*PULSES_PER_ROTATION);
 
-        Wheel.Speed(0.8,0.8);
-        // Run until number of pulses calcualted in fucntion are reached 
-        while(rPulseCount<=target_pulse && lPulseCount<=target_pulse)
-        {
-            
-            if (left_encoder.pulseReceived() == 1) //encoders are backwards
-            {
-                lPulseCount++;
-            }
-            if (right_encoder.pulseReceived() == 1)
-            {
-                rPulseCount++;
-            }
-            // check pulses against each other and 
-            if leftpulse < rightpulse
-                {
-                    Wheel.Speed(0.0,0.8);
-                }
-            if leftpulse > rightpulse
-                {
-                    Wheel.Speed(0.8,0.0);
-                }
-            if leftpulse == rightpulse
-                {
-                    Wheel.Speed(0.8,0.8);
-                }
-        }
-    
-    //Stop the wheels
-    Wheel.Speed(0.0, 0.0);
-    }
-    slowforward();
-    rotateClockwise(180, 20, circumference, width);
-    slowforward();
 }*/
        
 }
@@ -181,7 +136,7 @@ void PushLane()
 void NextLane(float fdist, float bdist)
 {       
     wait_us(200000); // Use of waits seems to help keep the turning more accurate
-    driveForward(30, 20, circumference);
+    driveForward(30, 20, circumference); // gets off the back wall to allow for turn
     wait_us(200000);
     rotateClockwise(90, 20, circumference, width); // rotate 90 degrees 
     wait_us(200000);
@@ -190,12 +145,13 @@ void NextLane(float fdist, float bdist)
     driveBackward(bdist, 20, circumference); // drive 40 mm back to cause overlap after bead clearance
     wait_us(200000);
     rotateCounterClockwise(90, 50, circumference, width); // rotate 90 degrees back to push beads
-    wait_us(200000);
-    driveBackward(60, 20, circumference);
 }
 
 void backtostart()
 {
+    wait_us(200000); // Use of waits seems to help keep the turning more accurate
+    driveForward(30, 20, circumference); // gets off the back wall to allow for turn
+    wait_us(200000);
     rotateCounterClockwise(90, 20, circumference, width);
     wait_us(200000);
     driveForward(500, 20, circumference); // drive most of length to loop again 
@@ -212,19 +168,19 @@ void TurnLeft(float angle) // to be tested
     // Determines the how many full and partial rotataions needed for the distance input and then how many pulses to achieve it
     float outwheel = width*2; //outer wheel moves twice as far
     // calculated distance for each wheel of buggy's axis
-    float indist = (angle/360)*width*3.141; 
-    float outdist = (angle/360)*outwheel*3.141; 
+    float indist = (angle/360)*2*width*3.141; 
+    float outdist = (angle/360)*2*outwheel*3.141; 
     // calculate number of rotations needed
     float inRotations = indist/circumference; 
     float outRotations = outdist/circumference;
     //calculates the number of pulses needed for each wheel
     float inpulse = floor(inRotations*PULSES_PER_ROTATION); 
-    float outpulse = ceil(outRotations*PULSES_PER_ROTATION) + 12; //changes to ceil wasn't 90 degrees, then added 12 for accuracy on my table, top be tested in arena
-    printf("inpulse = %f\n", inpulse); //calculates 25
-    printf("outpulse = %f\n", outpulse); // calculates 52 + 2 = 54
+    float outpulse = floor(outRotations*PULSES_PER_ROTATION); 
+    printf("inpulse = %f\n", inpulse); 
+    printf("outpulse = %f\n", outpulse); 
     // Run until number of pulses calcualted in functions are reached
     Wheel.Speed(0.8,0.4); // out wheel needs to move twice as fast to turn the total pulses the same number of times
-    while(rPulseCount<=outpulse && lPulseCount<=inpulse)
+    while(rPulseCount<=outpulse || lPulseCount<=inpulse)
     {
         //SpeedControl(); Working on it currently
         if (right_encoder.pulseReceived() == 1) // encoders were mounted backwards, changed digital input definition.
@@ -237,8 +193,21 @@ void TurnLeft(float angle) // to be tested
             lPulseCount++;
             
         }
+        //For each of these if statements: If the wheel is faster than the target rpm, slow it down, and vice versa
+        /*    if(lRPM>tRPM){
+                Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()-pwrIncrement);
+            }
+            else if(lRPM<tRPM){
+                Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()+pwrIncrement);
+            }
+            if(rRPM>tRPM){
+                Wheel.Speed(Wheel.getSpeedRight()-pwrIncrement,Wheel.getSpeedLeft());
+            }
+            else if(lRPM<tRPM){
+                Wheel.Speed(Wheel.getSpeedRight()+pwrIncrement,Wheel.getSpeedLeft());
+            }
         printf("lPulsecount = %d\n", lPulseCount);
-        printf("rPulsecount = %d\n", rPulseCount);
+        printf("rPulsecount = %d\n", rPulseCount);*/
     }
     //Stop the wheels
     Wheel.Speed(0.0, 0.0);
@@ -246,112 +215,3 @@ void TurnLeft(float angle) // to be tested
 
 
 
-//For Wheel.Speed it's (right motor, left motor)
-/*for(int i = 0; i < 4; i++){
-                bk(20);
-                fd(100);
-                bk(120);
-                fd(5);
-                rt(25);
-                fd(50);
-                bk(10);
-                lt(25);
-            }
-void fd(int gates){
-    Timer timeout;
-    timeout.start();
-    int lcount = 0;
-    int rcount = 0;
-    int timeouttime = gates / 20;
-    if (timeouttime == 0) timeouttime = 1;
-
-    Wheel.Speed(0.81,0.8);
-                while(true){
-                  microseconds time = timeout.elapsed_time();
-                  if (left_encoder.pulseReceived() > 0) {
-                    lcount++;
-                    }
-                    if(right_encoder.pulseReceived()>0){
-                        rcount++;
-                    }
-                    if ((rcount >= gates && lcount >= gates) || (time > seconds(timeouttime))) {
-                      Wheel.Speed(0.0, 0.0);
-                      break;
-                    }
-                }
-}
-
-
-void bk(int gates){
-    Timer timeout;
-    timeout.start();
-    int lcount = 0;
-    int rcount = 0;
-    int timeouttime = gates / 20;
-    if (timeouttime == 0) timeouttime = 1;
-
-    Wheel.Speed(-0.8,-0.81);
-                while(true){
-                  microseconds time = timeout.elapsed_time();
-                  if (left_encoder.pulseReceived() > 0) {
-                    lcount++;
-                    }
-                    if(right_encoder.pulseReceived()>0){
-                        rcount++;
-                    }
-                    if ((rcount >= gates && lcount >= gates) || (time > seconds(timeouttime))) {
-                      Wheel.Speed(0.0, 0.0);
-                      break;
-                    }
-                }
-}
-
-
-void rt(int gates){
-    Timer timeout;
-    timeout.start();
-    int lcount = 0;
-    int rcount = 0;
-    int timeouttime = gates / 10;
-    if (timeouttime == 0) timeouttime = 1;
-
-    Wheel.Speed(-0.8,0.8);
-                while(true){
-                  microseconds time = timeout.elapsed_time();
-                  if (left_encoder.pulseReceived() > 0) {
-                    lcount++;
-                    }
-                    if(right_encoder.pulseReceived()>0){
-                        rcount++;
-                    }
-                    if ((rcount >= gates && lcount >= gates) || (time > seconds(timeouttime))) {
-                      Wheel.Speed(0.0, 0.0);
-                      break;
-                    }
-                }
-}
-
-void lt(int gates){
-    Timer timeout;
-    timeout.start();
-    int lcount = 0;
-    int rcount = 0;
-    int timeouttime = gates / 10;
-    if (timeouttime == 0) timeouttime = 1;
-    
-    Wheel.Speed(0.8,-0.8);
-                while(true){
-                  microseconds time = timeout.elapsed_time();
-                  if (left_encoder.pulseReceived() > 0) {
-                    lcount++;
-                    }
-                    if(right_encoder.pulseReceived()>0){
-                        rcount++;
-                    }
-                    if ((rcount >= gates && lcount >= gates) || (time > seconds(timeouttime))) {
-                      Wheel.Speed(0.0, 0.0);
-                      break;
-                    }
-                }
-}
-*/
