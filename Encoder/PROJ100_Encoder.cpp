@@ -27,7 +27,6 @@ void PROJ100_Encoder::setLastPulseTimeUs(uint32_t time){
     _new_timing_data_available = true;   
 }
 
-
 /*
     Encoder GPIO interrupt handler - This runs in ISR context
     Reads the time from the pulse timer and update the last pulse time and sets isStaionary to false
