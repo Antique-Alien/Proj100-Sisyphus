@@ -86,10 +86,11 @@ int main ()
         // Write the parts of your code which should run in a loop between here..
         while(true)
         {
-            //driveForward(1000, 20, circumference); // drive 1m (1000mm)
+            driveForward(1000, 20, circumference); // drive 1m (1000mm)
             rotateClockwise(202, 20, circumference, width); // changed to 202 for friction adjustment....rotate 180 degrees
-            //driveForward(1000, 20, circumference); // drive 1m (1000mm)
+            driveForward(1000, 20, circumference); // drive 1m (1000mm)
             wait_us(5000000);
+            Victory();
 
             /*for(int x = 1; x <= 3; x++) // run for 3 loops, as 4.28 lanes covers width of board so 5 lane pushes needed in total
             {

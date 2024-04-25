@@ -13,5 +13,6 @@ extern void Meglovania(void);
 extern void Rick(void);
 extern void Imperial(void);
 extern void RushE(void);
+extern void Victory(void);
 
 #endif

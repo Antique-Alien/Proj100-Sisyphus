@@ -100,6 +100,9 @@ void Frog(void){
     playFrog(buzzer);
 }
 
+void Victory(void){
+    playVictory(buzzer);
+}
 
 void PlayAll(void){
     playMeglovania(buzzer);

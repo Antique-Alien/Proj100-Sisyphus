@@ -115,6 +115,7 @@ void playImperialMarch(PwmOut name);
 void playRick(PwmOut name);
 void playFrog(PwmOut name);
 void playRushE(PwmOut name);
+void playVictory(PwmOut name);
         
 /* Private functions ---------------------------------------------------------*/
 
