@@ -12,12 +12,13 @@
 
 DigitalIn microswitch1(D4);         //Instance of the DigitalIn class called 'microswitch1'
 DigitalIn microswitch2(D3);         //Instance of the DigitalIn class called 'microswitch2'
-/*
+
 bool checkpress(){
     if (microswitch1 == 1){
         return true;
     }
-}*/
+    else{return false;}
+}
 
 void simple_test(){
     // Variables and objects
