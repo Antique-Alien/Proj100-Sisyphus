@@ -153,7 +153,7 @@ void driveForward(float dist, float tRPM, float circ){
     int rPulseCount = 0; // Number of pulses on the Right
     int lPulseCount = 0; // Number of pulses on the Left
     float numRotations = dist/circ; // number of rotations needed
-        int loop_delay_ms = 1;          // This sets how often the loop runs
+    int loop_delay_ms = 1;          // This sets how often the loop runs
 
 
     //Testing Variables
@@ -213,15 +213,8 @@ void driveForward(float dist, float tRPM, float circ){
         LastlRPM = lRPM;
         LastrRPM = rRPM;
 
-        if(lTime >1 || rTime > 1){ //Was print_timer.read_ms()
 
-            printf("Target RPM: %f\n", tRPM);
-            printf("Left RPM: %f\n", LastlRPM);
-            printf("Right RPM: %f\n", LastrRPM);
-            printf("lTime: %d\n",lTime);
-            printf("rTime: %d\n",rTime);
-        }
-                        ThisThread::sleep_for(std::chrono::milliseconds(loop_delay_ms));
+        ThisThread::sleep_for(std::chrono::milliseconds(loop_delay_ms));
 
     }
     //Stop the wheels
@@ -239,7 +232,7 @@ void driveBackward(float dist, float tRPM, float circ){
     int rPulseCount = 0; // Number of pulses on the Right
     int lPulseCount = 0; // Number of pulses on the Left
     float numRotations = dist/circ; // number of rotations needed
-        int loop_delay_ms = 1;          // This sets how often the loop runs
+    int loop_delay_ms = 1;          // This sets how often the loop runs
 
 
     //Testing Variables
@@ -303,15 +296,8 @@ void driveBackward(float dist, float tRPM, float circ){
         LastlRPM = lRPM;
         LastrRPM = rRPM;
 
-        if(lTime >1 || rTime > 1){ //Was print_timer.read_ms()
 
-            printf("Target RPM: %f\n", tRPM);
-            printf("Left RPM: %f\n", LastlRPM);
-            printf("Right RPM: %f\n", LastrRPM);
-            printf("lTime: %d\n",lTime);
-            printf("rTime: %d\n",rTime);
-        }
-                        ThisThread::sleep_for(std::chrono::milliseconds(loop_delay_ms));
+        ThisThread::sleep_for(std::chrono::milliseconds(loop_delay_ms));
 
     }
     //Stop the wheels
@@ -329,7 +315,7 @@ void rotateClockwise(float angle, float tRPM, float circ, float width){
     int lPulseCount = 0; // Number of pulses on the Left
     float dist = angle/360*width*3.141;
     float numRotations = dist/circ; // number of rotations needed
-        int loop_delay_ms = 1;          // This sets how often the loop runs
+    int loop_delay_ms = 1;          // This sets how often the loop runs
 
 
     //Testing Variables
@@ -389,14 +375,7 @@ void rotateClockwise(float angle, float tRPM, float circ, float width){
         LastlRPM = lRPM;
         LastrRPM = rRPM;
 
-        if(lTime >1 || rTime > 1){ //Was print_timer.read_ms()
 
-            printf("Target RPM: %f\n", tRPM);
-            printf("Left RPM: %f\n", LastlRPM);
-            printf("Right RPM: %f\n", LastrRPM);
-            printf("lTime: %d\n",lTime);
-            printf("rTime: %d\n",rTime);
-        }
         ThisThread::sleep_for(std::chrono::milliseconds(loop_delay_ms));
 
     }
@@ -417,7 +396,7 @@ void rotateCounterClockwise(float angle, float tRPM, float circ, float width){
     int lPulseCount = 0; // Number of pulses on the Left
     float dist = angle/360*width*3.141;
     float numRotations = dist/circ; // number of rotations needed
-        int loop_delay_ms = 1;          // This sets how often the loop runs
+    int loop_delay_ms = 1;          // This sets how often the loop runs
 
 
     //Testing Variables
@@ -477,14 +456,6 @@ void rotateCounterClockwise(float angle, float tRPM, float circ, float width){
         LastlRPM = lRPM;
         LastrRPM = rRPM;
 
-        if(lTime >1 || rTime > 1){ //Was print_timer.read_ms()
-
-            printf("Target RPM: %f\n", tRPM);
-            printf("Left RPM: %f\n", LastlRPM);
-            printf("Right RPM: %f\n", LastrRPM);
-            printf("lTime: %d\n",lTime);
-            printf("rTime: %d\n",rTime);
-        }
         ThisThread::sleep_for(std::chrono::milliseconds(loop_delay_ms));
 
     }
@@ -494,135 +465,3 @@ void rotateCounterClockwise(float angle, float tRPM, float circ, float width){
 
 }
 
-/*
-void rotateClockwise(float angle, float tRPM, float circ, float width){
-    Timer SpeedTimer;
-
-    //Initialzing variables
-    int ppr = left_encoder.getPulsesPerRotation();
-    float rRPM; //Right RPM
-    float lRPM; //Left RPM
-    float dist = angle/360*width*3.141;
-    int rPulseCount; // Number of pulses on the Right
-    int lPulseCount; // Number of pulses on the Left
-    float numRotations = dist/circ; // number of rotations needed
-    int pulseTarget = floor(numRotations*ppr); // Number of pulses needed to reach the target
-
-
-    bool rolling = true; // Is the cart supposed to be driving 
-    int32_t lTime;
-    int32_t rTime;
-    //    float pwrIncrement = 0.0001; // Increment for changing power to the wheels
-
-    Wheel.Speed(-0.8,0.8);
-    SpeedTimer.start();
-    while(rolling){
-
-        lTime = left_encoder.getLastPulseTimeUs();
-        rTime = right_encoder.getLastPulseTimeUs();
-        //Increment the pulse counts if the pulse reader gets a new pulse.
-        if(lTime>0){
-            lPulseCount++;
-        }
-        if(rTime>0){
-        
-            rPulseCount++;
-        }
-
-        //Get the current rmp of both wheels
-        lRPM = (60000000.0f/(ppr*lTime));
-        rRPM = (60000000.0f/(ppr*rTime));
-        int sTimer = SpeedTimer.read();
-        if(sTimer >= 200){
-            //For each of these if statements: If the wheel is faster than the target rpm, slow it down, and vice versa
-            if(lRPM>tRPM){
-                Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()+pwrIncrement);
-            }
-            else if(lRPM<tRPM){
-                Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()-pwrIncrement);
-            }
-            if(rRPM>tRPM){
-                Wheel.Speed(Wheel.getSpeedRight()-pwrIncrement,Wheel.getSpeedLeft());
-            }
-            else if(lRPM<tRPM){
-                Wheel.Speed(Wheel.getSpeedRight()+pwrIncrement,Wheel.getSpeedLeft());
-            }
-        }
-        //If both pulse counters are above or equal to the target, stop driving.
-        if(rPulseCount>=pulseTarget && lPulseCount>=pulseTarget){
-            rolling = false;
-        }
-    }
-
-    //Stop the wheels
-    Wheel.Speed(0.0, 0.0);
-    SpeedTimer.stop();
-    SpeedTimer.reset();
-}
-
-void rotateCounterClockwise(float angle, float tRPM, float circ, float width){
-    Timer SpeedTimer;
-
-    //Initialzing variables
-    int ppr = left_encoder.getPulsesPerRotation();
-    float rRPM; //Right RPM
-    float lRPM; //Left RPM
-    float dist = angle/360*width*3.141;
-    int rPulseCount; // Number of pulses on the Right
-    int lPulseCount; // Number of pulses on the Left
-    float numRotations = dist/circ; // number of rotations needed
-    int pulseTarget = floor(numRotations*ppr); // Number of pulses needed to reach the target
-
-
-    bool rolling = true; // Is the cart supposed to be driving 
-    int32_t lTime;
-    int32_t rTime;
-    //    float pwrIncrement = 0.0001; // Increment for changing power to the wheels
-
-    Wheel.Speed(0.8,-0.8);
-    SpeedTimer.start();
-    while(rolling){
-
-        lTime = left_encoder.getLastPulseTimeUs();
-        rTime = right_encoder.getLastPulseTimeUs();
-        //Increment the pulse counts if the pulse reader gets a new pulse.
-        if(lTime>0){
-            lPulseCount++;
-        }
-        if(rTime>0){
-        
-            rPulseCount++;
-        }
-
-        //Get the current rmp of both wheels
-        lRPM = (60000000.0f/(ppr*lTime));
-        rRPM = (60000000.0f/(ppr*rTime));
-        int sTimer = SpeedTimer.read();
-        if(sTimer >= 200){
-            //For each of these if statements: If the wheel is faster than the target rpm, slow it down, and vice versa
-            if(lRPM>tRPM){
-                Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()-pwrIncrement);
-            }
-            else if(lRPM<tRPM){
-                Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()+pwrIncrement);
-            }
-            if(rRPM>tRPM){
-                Wheel.Speed(Wheel.getSpeedRight()+pwrIncrement,Wheel.getSpeedLeft());
-            }
-            else if(lRPM<tRPM){
-                Wheel.Speed(Wheel.getSpeedRight()-pwrIncrement,Wheel.getSpeedLeft());
-            }
-        }
-        //If both pulse counters are above or equal to the target, stop driving.
-        if(rPulseCount>=pulseTarget && lPulseCount>=pulseTarget){
-            rolling = false;
-        }
-        printf("Wheel: %f,%f\n",Wheel.getSpeedRight(),Wheel.getSpeedLeft());
-    }
-
-    //Stop the wheels
-    Wheel.Speed(0.0, 0.0);
-    SpeedTimer.stop();
-    SpeedTimer.reset();
-}
-*/

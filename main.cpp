@@ -87,15 +87,15 @@ int main ()
     {
         //Straight Line code
 
-        /*
+        
         driveForward(1180, 30, circumference); // drive 1m (1000mm)
         rotateClockwise(180, 20, circumference, width); // changed to 202 for friction adjustment....rotate 180 degrees
         driveForward(1050, 30, circumference); // drive 1m (1000mm)
         rotateClockwise(180, 20, circumference, width); // changed to 202 for friction adjustment....rotate 180 degrees
         Victory();
         wait_us(5000000);
-        */
-
+        
+/*
         for(int x = 1; x <= 3; x++) // run for 3 loops, as 4.28 lanes covers width of board so 5 lane pushes needed in total
         {
             PushLane();
@@ -106,7 +106,7 @@ int main ()
         rotateClockwise(90, tRPM, circumference, width); // rotate 90 degrees
         TurnLeft(90);
         driveForward(200, tRPM, circumference);
-        driveBackward(400, tRPM, circumference);
+        driveBackward(500, tRPM, circumference);
         //To add a curved turn to scoop more beads
         //wait_us(100000000);
         //NextLane(40, 0); // drive 40mm to clear last part, 44.8mm left if placed perfectly
@@ -114,7 +114,7 @@ int main ()
         // return to start and loop again?
         backtostart();
     
-    /*//1 meter parallel line test
+    //1 meter parallel line test
     while(true)
     {
         driveForward(1000, 50, circumference) // drive 1m (1000mm)
@@ -133,7 +133,7 @@ int main ()
 void PushLane() 
 {
     driveForward(320, tRPM, circumference); // drive 307 mm up to arena divider
-    driveBackward(400, tRPM, circumference); // drive 307 mm back to arena beginning
+    driveBackward(500, tRPM, circumference); // drive 307 mm back to arena beginning
 
 }    
 
