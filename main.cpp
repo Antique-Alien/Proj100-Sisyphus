@@ -26,6 +26,7 @@ using std::chrono::milliseconds;
 DigitalIn myButton(USER_BUTTON);    //Instance of the DigitalIn class called 'myButton'   
 DigitalOut greenLED(LED1);          //Instance of the DigitalOut class called 'greenLED'
 DigitalOut blueLED(LED2);
+DigitalOut redLED(LED3);
 
 Motor Wheel(D13,A0,D9,D10);      //Instance of the Motor Class called 'Wheel' see motor.h and motor.cpp (The Pin A0 was originally D11, however this caused issues with the buzzer so I have set D0 as an input and then put a wire between A0 and D11)
 DigitalIn Pin(D11);
@@ -62,8 +63,10 @@ int main ()
     left_encoder.setDebounceTimeUs(DEBOUNCE_US);
     right_encoder.setDebounceTimeUs(DEBOUNCE_US);
 
-    bool Menu = true;
+    int Menu = 2;
     bool buttonState = false;
+
+
     
     // Wait for the blue button to be pressed
     printf("Press Blue Button To Begin\n\r");
@@ -73,12 +76,23 @@ int main ()
         buttonState = checkpress();
         if (buttonState == true ){
             wait_us(100000);
-            Menu = !Menu;
-            greenLED = !greenLED; // Green LED is for Go Straight, Blue LED is for Bead Pushing
-            blueLED = !blueLED;
+            Menu ++;
+            if (Menu == 3)Menu = 0; 
+            if(Menu == 0){
+                redLED = 1;
+                blueLED = 0;
+                greenLED = 0;
+            }else if(Menu == 1){
+                redLED = 0;
+                blueLED = 0;
+                greenLED = 1;
+            }else{
+                redLED = 0;
+                blueLED = 1;
+                greenLED = 0;
+            }
         }
-        
-     }
+    }
 
     // Start the encoders
     left_encoder.start();
@@ -92,14 +106,14 @@ int main ()
     {
         //Straight Line code
 
-        if(Menu == false){
+        if(Menu == 1){
             driveForward(1180, 30, circumference); // drive 1m (1000mm)
             rotateClockwise(180, 20, circumference, width); // changed to 202 for friction adjustment....rotate 180 degrees
             driveForward(1050, 30, circumference); // drive 1m (1000mm)
             rotateClockwise(180, 20, circumference, width); // changed to 202 for friction adjustment....rotate 180 degrees
             Victory();
             wait_us(5000000);
-        }else{
+        }else if(Menu == 2){
 
             for(int x = 1; x <= 3; x++) // run for 3 loops, as 4.28 lanes covers width of board so 5 lane pushes needed in total
             {
@@ -108,16 +122,22 @@ int main ()
             }
             //next section does the last pushes and 0.28 (44.8mm) part of the board 
             PushLane(); //4th lane push
+            wait_us(200000);
             rotateClockwise(90, tRPM, circumference, width); // rotate 90 degrees
-            TurnLeft(90);
+            wait_us(200000);
+            driveBackward(80, tRPM, circumference);
+            wait_us(200000);
+            TurnLeft(90); //curved turn to scoop more beads
+            wait_us(200000);
             driveForward(200, tRPM, circumference);
+            wait_us(200000);
             driveBackward(500, tRPM, circumference);
-            //To add a curved turn to scoop more beads
-            //wait_us(100000000);
-            //NextLane(40, 0); // drive 40mm to clear last part, 44.8mm left if placed perfectly
-            //PushLane(); // final lane push
-            // return to start and loop again?
+            wait_us(200000);
             backtostart();
+        }
+        else{
+            driveForward(1000,40, circumference);
+            Rick();
         }
     
     /*
