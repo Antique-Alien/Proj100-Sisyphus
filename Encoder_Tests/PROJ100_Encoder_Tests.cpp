@@ -13,6 +13,7 @@
 DigitalIn microswitch1(D4);         //Instance of the DigitalIn class called 'microswitch1'
 DigitalIn microswitch2(D3);         //Instance of the DigitalIn class called 'microswitch2'
 
+//Boolean to check is microswitch has been pressed
 bool checkpress(){
     if (microswitch1 == 1){
         return true;
@@ -171,22 +172,24 @@ void driveForward(float dist, float tRPM, float circ){
     
     bool rolling = true; // Is the cart supposed to be driving
     
-    
-    int32_t lTime;
+    // Light pulse time ariables
+    int32_t lTime; 
     int32_t rTime;
 
     float pwrIncrement = 0.02f; // Increment for changing power to the wheels
     
-    Wheel.Speed(0.5,0.5);
+    Wheel.Speed(0.5,0.5); //Initial speed to starts driving Forwards
 
     while(rolling){
 
+        
         lTime = left_encoder.getLastPulseTimeUs();
         rTime = right_encoder.getLastPulseTimeUs();
         //Increment the pulse counts if the pulse reader gets a new pulse.
         if(lTime>0){
             lPulseCount++;
-            lRPM = (60000000.0f/(ppr*lTime));
+            lRPM = (60000000.0f/(ppr*lTime)); // Calculates current RPM of Left wheel
+            // Compares left wheel RPM to the target RPM and adjusts speed 
             if(lRPM>tRPM){
                 Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()-pwrIncrement);
             }
@@ -197,7 +200,8 @@ void driveForward(float dist, float tRPM, float circ){
         if(rTime>0){
         
             rPulseCount++;
-            rRPM = (60000000.0f/(ppr*rTime));
+            rRPM = (60000000.0f/(ppr*rTime)); // Calculates current RPM of Right wheel
+            // Compares right wheel RPM to the target RPM and adjusts speed 
             if(rRPM>tRPM){
                 Wheel.Speed(Wheel.getSpeedRight()-pwrIncrement,Wheel.getSpeedLeft());
             }
@@ -211,8 +215,8 @@ void driveForward(float dist, float tRPM, float circ){
         if(rPulseCount>=pulseTarget && lPulseCount>=pulseTarget){
             rolling = false;
         }
-        LastlRPM = lRPM;
-        LastrRPM = rRPM;
+        LastlRPM = lRPM; // For testing 
+        LastrRPM = rRPM; // For testing
 
 
         ThisThread::sleep_for(std::chrono::milliseconds(loop_delay_ms));
@@ -250,13 +254,13 @@ void driveBackward(float dist, float tRPM, float circ){
     
     bool rolling = true; // Is the cart supposed to be driving
     
-    
+    // Light pulse time variables
     int32_t lTime;
     int32_t rTime;
 
     float pwrIncrement = 0.02f; // Increment for changing power to the wheels
     
-    Wheel.Speed(-0.5,-0.5);
+    Wheel.Speed(-0.5,-0.5); //Initial speed and starts driving backwards
 
     while(rolling){
 
@@ -265,7 +269,8 @@ void driveBackward(float dist, float tRPM, float circ){
         //Increment the pulse counts if the pulse reader gets a new pulse.
         if(lTime>0){
             lPulseCount++;
-            lRPM = (60000000.0f/(ppr*lTime));
+            lRPM = (60000000.0f/(ppr*lTime)); // Calculates current RPM of Left wheel
+            // Compares left wheel RPM to the target RPM and adjusts speed
             if(lRPM>tRPM){
                 Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()+pwrIncrement);
             }
@@ -276,7 +281,8 @@ void driveBackward(float dist, float tRPM, float circ){
         if(rTime>0){
         
             rPulseCount++;
-            rRPM = (60000000.0f/(ppr*rTime));
+            rRPM = (60000000.0f/(ppr*rTime)); // Calculates current RPM of Right wheel
+            // Compares right wheel RPM to the target RPM and adjusts speed
             if(rRPM>tRPM){
                 Wheel.Speed(Wheel.getSpeedRight()+pwrIncrement,Wheel.getSpeedLeft());
             }
@@ -294,8 +300,8 @@ void driveBackward(float dist, float tRPM, float circ){
             wait_us(500000);
             rolling = false;
         }
-        LastlRPM = lRPM;
-        LastrRPM = rRPM;
+        LastlRPM = lRPM; //for testing
+        LastrRPM = rRPM; //for testing
 
 
         ThisThread::sleep_for(std::chrono::milliseconds(loop_delay_ms));
@@ -333,13 +339,13 @@ void rotateClockwise(float angle, float tRPM, float circ, float width){
     
     bool rolling = true; // Is the cart supposed to be driving
     
-    
+    // Light pulse time variables
     int32_t lTime;
     int32_t rTime;
 
     float pwrIncrement = 0.02f; // Increment for changing power to the wheels
     
-    Wheel.Speed(-0.5,0.5);
+    Wheel.Speed(-0.5,0.5); //Reverses right motor and starts left motor to turn 
 
     while(rolling){
 
@@ -348,7 +354,8 @@ void rotateClockwise(float angle, float tRPM, float circ, float width){
         //Increment the pulse counts if the pulse reader gets a new pulse.
         if(lTime>0){
             lPulseCount++;
-            lRPM = (60000000.0f/(ppr*lTime));
+            lRPM = (60000000.0f/(ppr*lTime)); // Calculates current RPM of Left wheel
+            // Compares left wheel RPM to the target RPM and adjusts speed
             if(lRPM>tRPM){
                 Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()-pwrIncrement);
             }
@@ -359,7 +366,8 @@ void rotateClockwise(float angle, float tRPM, float circ, float width){
         if(rTime>0){
         
             rPulseCount++;
-            rRPM = (60000000.0f/(ppr*rTime));
+            rRPM = (60000000.0f/(ppr*rTime)); // Calculates current RPM of Right wheel
+            // Compares right wheel RPM to the target RPM and adjusts speed
             if(rRPM>tRPM){
                 Wheel.Speed(Wheel.getSpeedRight()+pwrIncrement,Wheel.getSpeedLeft());
             }
@@ -373,8 +381,8 @@ void rotateClockwise(float angle, float tRPM, float circ, float width){
         if(rPulseCount>=pulseTarget && lPulseCount>=pulseTarget){
             rolling = false;
         }
-        LastlRPM = lRPM;
-        LastrRPM = rRPM;
+        LastlRPM = lRPM; //For testing
+        LastrRPM = rRPM; //For testing
 
 
         ThisThread::sleep_for(std::chrono::milliseconds(loop_delay_ms));
@@ -395,7 +403,7 @@ void rotateCounterClockwise(float angle, float tRPM, float circ, float width){
     float lRPM; //Left RPM
     int rPulseCount = 0; // Number of pulses on the Right
     int lPulseCount = 0; // Number of pulses on the Left
-    float dist = angle/360*width*3.141;
+    float dist = angle/360*width*3.141; //distance travelled by each wheel
     float numRotations = dist/circ; // number of rotations needed
     int loop_delay_ms = 1;          // This sets how often the loop runs
 
@@ -414,13 +422,13 @@ void rotateCounterClockwise(float angle, float tRPM, float circ, float width){
     
     bool rolling = true; // Is the cart supposed to be driving
     
-    
+    // Light pulse time variables
     int32_t lTime;
     int32_t rTime;
 
     float pwrIncrement = 0.02f; // Increment for changing power to the wheels
     
-    Wheel.Speed(0.5,-0.5);
+    Wheel.Speed(0.5,-0.5); //Reverses left motor and starts right motor to turn 
 
     while(rolling){
 
@@ -429,7 +437,8 @@ void rotateCounterClockwise(float angle, float tRPM, float circ, float width){
         //Increment the pulse counts if the pulse reader gets a new pulse.
         if(lTime>0){
             lPulseCount++;
-            lRPM = (60000000.0f/(ppr*lTime));
+            lRPM = (60000000.0f/(ppr*lTime)); // Calculates current RPM of Left wheel
+            // Compares left wheel RPM to the target RPM and adjusts speed
             if(lRPM>tRPM){
                 Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()+pwrIncrement);
             }
@@ -440,7 +449,8 @@ void rotateCounterClockwise(float angle, float tRPM, float circ, float width){
         if(rTime>0){
         
             rPulseCount++;
-            rRPM = (60000000.0f/(ppr*rTime));
+            rRPM = (60000000.0f/(ppr*rTime)); // Calculates current RPM of Right wheel
+            // Compares right wheel RPM to the target RPM and adjusts speed
             if(rRPM>tRPM){
                 Wheel.Speed(Wheel.getSpeedRight()-pwrIncrement,Wheel.getSpeedLeft());
             }
@@ -454,8 +464,8 @@ void rotateCounterClockwise(float angle, float tRPM, float circ, float width){
         if(rPulseCount>=pulseTarget && lPulseCount>=pulseTarget){
             rolling = false;
         }
-        LastlRPM = lRPM;
-        LastrRPM = rRPM;
+        LastlRPM = lRPM; //For testing
+        LastrRPM = rRPM; //For testing
 
         ThisThread::sleep_for(std::chrono::milliseconds(loop_delay_ms));
 

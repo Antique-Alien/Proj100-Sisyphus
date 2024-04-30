@@ -15,21 +15,21 @@
 #define DEBOUNCE_US                 30000
 #define circumference               209 // Circumference of wheel in mm
 #define width                       113.5 // width of Cart in mm
-#define tRPM                        60//Target RPM
+#define tRPM                        60//Target RPM -  for mass change across bead pushing code
 
 using chrono::seconds;
 using std::chrono::microseconds;
 using std::chrono::milliseconds;
 
-//DigitalIn microswitch1(D4);         //Instance of the DigitalIn class called 'microswitch1'
-//DigitalIn microswitch2(D3);         //Instance of the DigitalIn class called 'microswitch2'
+//DigitalIn microswitch1(D4);         //Instance of the DigitalIn class called 'microswitch1' moved to PROJ100_Encorder_Tests for use in functions
+//DigitalIn microswitch2(D3);         //Instance of the DigitalIn class called 'microswitch2' moved to PROJ100_Encorder_Tests for use in functions
 DigitalIn myButton(USER_BUTTON);    //Instance of the DigitalIn class called 'myButton'   
 DigitalOut greenLED(LED1);          //Instance of the DigitalOut class called 'greenLED'
-DigitalOut blueLED(LED2);
-DigitalOut redLED(LED3);
+DigitalOut blueLED(LED2);           //Instance of the DigitalOut class called 'blueLED'
+DigitalOut redLED(LED3);            //Instance of the DigitalOut class called 'redLED'
 
 Motor Wheel(D13,A0,D9,D10);      //Instance of the Motor Class called 'Wheel' see motor.h and motor.cpp (The Pin A0 was originally D11, however this caused issues with the buzzer so I have set D0 as an input and then put a wire between A0 and D11)
-DigitalIn Pin(D11);
+DigitalIn Pin(D11);              // Buzzer pin to allow threading
 
 PROJ100_Encoder right_encoder (ENCODER_PIN_RIGHT,PULSES_PER_ROTATION);  //Instance of the PROJ100Encoder class called 'right_encoder'
 PROJ100_Encoder left_encoder(ENCODER_PIN_LEFT,PULSES_PER_ROTATION);     //Instance of the PROJ100Encoder class called 'left_encoder'
@@ -63,15 +63,17 @@ int main ()
     left_encoder.setDebounceTimeUs(DEBOUNCE_US);
     right_encoder.setDebounceTimeUs(DEBOUNCE_US);
 
+    //Initialising menu and button state - menu slection on beadpushing for 
     int Menu = 2;
     bool buttonState = false;
 
 
     
-    // Wait for the blue button to be pressed
+    // Wait for the blue button to be pressed, with menu selection allowing you cycle through the task list, with led lights for visual indication of task selected
     printf("Press Blue Button To Begin\n\r");
     greenLED = 0;
     blueLED = 1;
+    // use of microswitch to cycle through menu
     while (myButton == 0){
         buttonState = checkpress();
         if (buttonState == true ){
@@ -104,7 +106,7 @@ int main ()
     //speed_test(); 
     while(true)
     {
-        //Straight Line code
+        //Straight Line code - Green LED
 
         if(Menu == 1){
             driveForward(1180, 30, circumference); // drive 1m (1000mm)
@@ -113,7 +115,9 @@ int main ()
             rotateClockwise(180, 20, circumference, width); // changed to 202 for friction adjustment....rotate 180 degrees
             Victory();
             wait_us(5000000);
-        }else if(Menu == 2){
+        }
+        // Bead Pushing code - Blue LED
+        else if(Menu == 2){
 
             for(int x = 1; x <= 3; x++) // run for 3 loops, as 4.28 lanes covers width of board so 5 lane pushes needed in total
             {
@@ -125,7 +129,7 @@ int main ()
             wait_us(200000);
             rotateClockwise(90, tRPM, circumference, width); // rotate 90 degrees
             wait_us(200000);
-            driveBackward(80, tRPM, circumference);
+            driveBackward(80, tRPM, circumference); // to allow room for turn
             wait_us(200000);
             TurnLeft(90); //curved turn to scoop more beads
             wait_us(200000);
@@ -135,24 +139,15 @@ int main ()
             wait_us(200000);
             backtostart();
         }
+        // Parallel line for 1m - red LED
         else{
             driveForward(1000,40, circumference);
             Rick();
         }
     
-    /*
-    //1 meter parallel line test
-    while(true)
-    {
-        driveForward(1000, 50, circumference) // drive 1m (1000mm)
-        rotateClockwise(180, 50, circumference, width); // rotate 180 degrees
-        driveForward(1000, 50, circumference) // drive 1m (1000mm)
-    } */
+
     // ..and here
     }
-/*while(Parallel == true) //menu selection boolean
-
-}*/
        
 }
 
@@ -160,8 +155,8 @@ int main ()
 void PushLane() 
 {
     driveBackward(200, tRPM, circumference); // align with arena wall
-    driveForward(380, tRPM, circumference); // drive 307 mm up to arena divider
-    driveBackward(500, tRPM, circumference); // drive 307 mm back to arena beginning
+    driveForward(380, tRPM, circumference); // drive 307 mm up to arena divider - edited to push over bump
+    driveBackward(500, tRPM, circumference); // drive 500 mm back to arena wall, usually stopped by microswitches
 
 }    
 
@@ -192,7 +187,7 @@ void backtostart()
     rotateClockwise(90, tRPM, circumference, width);
 }
 
-void TurnLeft(float angle) // to be tested
+void TurnLeft(float angle) //variable to turn on a curve left 
 {
 
     // Determines the how many full and partial rotataions needed for the distance input and then how many pulses to achieve it
@@ -230,13 +225,13 @@ void TurnLeft(float angle) // to be tested
     
     bool rolling = true; // Is the cart supposed to be driving
     
-    
+    // Light pulse time variables
     int32_t lTime;
     int32_t rTime;
 
     float pwrIncrement = 0.02f; // Increment for changing power to the wheels
     
-    Wheel.Speed(0.8,0.4);
+    Wheel.Speed(0.8,0.4); //sets inital speeds, where right motor is twice as fast to get the correct turning radius
 
     while(rolling){
 
@@ -245,7 +240,8 @@ void TurnLeft(float angle) // to be tested
         //Increment the pulse counts if the pulse reader gets a new pulse.
         if(lTime>0){
             lPulseCount++;
-            lRPM = (60000000.0f/(ppr*lTime));
+            lRPM = (60000000.0f/(ppr*lTime)); // Calculates current RPM of Left wheel
+            // Compares left wheel RPM to the left wheel target RPM and adjusts speed
             if(lRPM>tlRPM){
                 Wheel.Speed(Wheel.getSpeedRight(),Wheel.getSpeedLeft()-pwrIncrement);
             }
@@ -256,7 +252,8 @@ void TurnLeft(float angle) // to be tested
         if(rTime>0){
         
             rPulseCount++;
-            rRPM = (60000000.0f/(ppr*rTime));
+            rRPM = (60000000.0f/(ppr*rTime)); // Calculates current RPM of Right wheel
+            // Compares right wheel RPM to the right wheel target RPM and adjusts speed
             if(rRPM>trRPM){
                 Wheel.Speed(Wheel.getSpeedRight()-pwrIncrement,Wheel.getSpeedLeft());
             }
@@ -270,8 +267,8 @@ void TurnLeft(float angle) // to be tested
         if(rPulseCount>=outpulse && lPulseCount>=inpulse){
             rolling = false;
         }
-        LastlRPM = lRPM;
-        LastrRPM = rRPM;
+        LastlRPM = lRPM; //For testing
+        LastrRPM = rRPM; //For testing
 
 
         ThisThread::sleep_for(std::chrono::milliseconds(loop_delay_ms));
