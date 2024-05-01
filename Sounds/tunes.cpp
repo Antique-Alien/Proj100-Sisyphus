@@ -104,7 +104,7 @@ void Victory(void){
     playVictory(buzzer);
 }
 
-void PlayAll(void){
+void PlayAll(void){          //Function to play all of the songs one after another.
     playMeglovania(buzzer);
     playRushE(buzzer);
     playImperialMarch(buzzer);
@@ -112,7 +112,7 @@ void PlayAll(void){
     playFrog(buzzer);
 }
 
-void PlaySong(int i){
+void PlaySong(int i){        //function to play a specific song dependent on the integer passed to it
     switch (i){
         case 0:
         playRushE(buzzer);
